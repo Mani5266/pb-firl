@@ -1,0 +1,8 @@
+seed: 42
+python_hash_seed: 42
+phase: 0
+datasets:
+  cattleface_rgbt: phamtrongthang/CattleFace-RGBT
+  recowgnition: TBD_official_repo
+  sheep_pain: TBD_mendeley_doi
+  equine_pain: TBD_uu_verify
