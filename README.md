@@ -11,6 +11,7 @@ pain detector proven cross-species.
 | Question | Result |
 |---|---|
 | RQ1 — per-animal baseline | Injected-shift AUROC **0.917 vs 0.825** (subtle), 0.961 vs 0.892 (strong), per-cow vs population |
+| RQ1 — dairy scale (161 Holstein) | Cow-LDA **0.604 → 0.005** (chance 0.006) after per-cow-z; LOIO 0.846 vs 0.780 |
 | RQ2 — MIL vs hard labels | Pain AUROC **0.959 vs 0.885** (balanced), **0.898 vs 0.874** (natural); F1 0.904 vs 0.809 |
 | RQ3 — identity leakage | Cow-ID decodability **0.566 → 0.125** (chance 0.20) on deviation features, signal retained |
 | RQ4 — domain shift | Worst quality-shift group AUROC **0.856** (MIL) vs 0.809 (baseline) |
@@ -32,6 +33,8 @@ python -m src.front_end.retrain_landmarks # Round-2: scale-jitter retrain
 python -m src.cusum.cusum                 # Phase 5: delay-vs-FAR
 python -m src.audit.leakage               # Phase 6: identity audit
 python -m src.eval.lodo                   # Phase 7: ablations + worst-group + ROC
+python -m src.datasets.recowgnition       # dairy manifest (local gated copy)
+python -m src.eval.dairy                  # dairy-scale validation -> dairy.json
 python -m src.eval.build_report           # reports/eval_report.json
 python -m unittest discover -s tests      # count + split-integrity checks
 ```

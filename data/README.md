@@ -23,11 +23,16 @@
   re-map when thermal_raw (dated) videos arrive.
 - Disk extras beyond annotations: 24 RGB + 183 thermal JPGs unannotated (1914/2794 on disk).
 
-## 6.2 ReCowGnition (dairy-cow identity, NO pain labels) — GATED, not on disk
-- Official repo: https://github.com/marcohuber/recowgnition/ @ 37cd2b6f6c68981bd03b45e491691d50b612da34 (HEAD 2026-09-24).
+## 6.2 ReCowGnition (dairy-cow identity, NO pain labels) — ON DISK 2026-09-24
+- Official repo: https://github.com/marcohuber/recowgnition/ @ 37cd2b6 (HEAD 2026-09-24).
 - License: CC BY-NC-SA 4.0 (repo README §License; Fraunhofer IGD 2026) — NON-COMMERCIAL, respect it.
-- Dataset (6838 imgs / 161 Holstein cows, 112x112 aligned) via request-only Google Drive folder
-  (link in repo README). Paper: arXiv:2607.22071 (ICPR 2026 workshop). NOT downloaded — needs manual request.
+  Local copy under `data/ReCowGnition - Dataset/` (gated request fulfilled manually; NOT in git).
+  Includes CowDetect.pt (YOLO face/muzzle detector, unused this phase).
+- VERIFIED local: 6838 JPGs, 161 unique cow IDs, 5 sessions
+  {GX014028, GX014040, GX014041, GX024040, GX024041}, 112x112 px, per-cow 1–219 (median 31).
+  Filename: [session]_[cowID]_[a]_[b].jpg. Matches paper (arXiv:2607.22071) exactly.
+- Role: dairy-scale personalisation validation (embeddings; §dairy in eval_report).
+  No pain labels -> B4 adversarial still deferred.
 
 ## 6.3 Sheep pain (Mendeley) — mirror on disk, full archive unverified
 - Source DOI: 10.17632/y5sm4smnfr.5 (v5, 2020-03-15, Noor/Zhao, Harbin Inst. Tech.), CC BY 4.0.

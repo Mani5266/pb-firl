@@ -1,6 +1,6 @@
 {
  "seed": 42,
- "config_hash": "3b2e23eb3eec119e",
+ "config_hash": "5ad264d7aa8f54c6",
  "splits": {
   "cattle_rgb": {
    "train": [
@@ -199,6 +199,30 @@
     0.9527
    ],
    "n": 225
+  }
+ },
+ "dairy": {
+  "n_cows": 161,
+  "n": 6838,
+  "chance": 0.0062,
+  "between": 0.4025,
+  "lda_raw": 0.6044,
+  "lda_percowz": 0.0045,
+  "loio": {
+   "shift_1.5": {
+    "mean_per_cow": 0.8455,
+    "mean_pop": 0.7798
+   },
+   "shift_3.0": {
+    "mean_per_cow": 0.9967,
+    "mean_pop": 0.991
+   }
+  },
+  "loio_cows": 151,
+  "dist": {
+   "same_sess": 0.5294,
+   "cross_sess": 0.7747,
+   "diff_cow": 1.0
   }
  },
  "cusum": {

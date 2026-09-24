@@ -33,5 +33,13 @@ class TestManifest(unittest.TestCase):
         self.assertTrue(np.isfinite(k).all())
 
 
+    def test_recowgnition_counts(self):
+        df = pd.read_parquet(os.path.join(CACHE, 'manifest_recow.parquet'))
+        self.assertEqual(len(df), 6838)
+        self.assertEqual(df.cow.nunique(), 161)
+        self.assertEqual(sorted(df.session.unique()),
+                         ['GX014028', 'GX014040', 'GX014041', 'GX024040', 'GX024041'])
+
+
 if __name__ == '__main__':
     unittest.main()

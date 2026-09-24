@@ -8,7 +8,8 @@ CACHE = os.path.join(ROOT, 'runs', 'features_cache')
 SEED = 42
 SRC = ['src/front_end/geometry.py', 'src/front_end/ingest.py', 'src/front_end/train_landmarks.py',
        'src/front_end/eval_landmarks.py', 'src/eval/variance_decomp.py', 'src/baseline/gaussian.py',
-       'src/pain/train_sheep.py', 'src/pain/improve_mil.py', 'src/cusum/cusum.py', 'src/audit/leakage.py', 'src/eval/lodo.py']
+       'src/pain/train_sheep.py', 'src/pain/improve_mil.py', 'src/eval/dairy.py',
+       'src/cusum/cusum.py', 'src/audit/leakage.py', 'src/eval/lodo.py']
 
 
 def main():
@@ -20,7 +21,7 @@ def main():
                        'sheep': 'mirror train_raw(898)/test(74)/test_raw(225)'},
            'models': {'mil': 'AttMIL D=128 focal(gamma=2) val-selected -> sheep_mil_best.pth',
                       'landmarks': 'krcnn R50-FPN R2: jitter(416,512,576) lr2e-5 x6ep'}}
-    for name in ['landmark_ap', 'variance', 'baseline_loio', 'pain_sheep_g5', 'pain_mil_v2',
+    for name in ['landmark_ap', 'variance', 'baseline_loio', 'pain_sheep_g5', 'pain_mil_v2', 'dairy',
                  'cusum', 'identity_audit', 'ablation']:
         p = os.path.join(CACHE, name + '.json')
         rep[name] = json.load(open(p)) if os.path.exists(p) else None

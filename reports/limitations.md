@@ -3,7 +3,9 @@
 1. CattleFace-RGBT identity count: 96 unique cow_tag IDs observed in cow_mapping.json/metadata.csv
    vs 108 claimed. Pipeline uses 5 folder-mapped cows (data/README assumption).
 2. CattleFace-RGBT temperature cows: 25 unique observed vs 21 claimed.
-3. ReCowGnition: gated (Google Drive request). No dairy-identity images on disk yet.
+3. ReCowGnition: LOCAL (6838/161 verified 2026-09-24, CC BY-NC-SA 4.0, kept out of git).
+   No pain labels -> B4 adversarial still deferred; beef-trained landmarks don't transfer to
+   dairy 112px crops (dairy_landmark_qc.png) -> dairy validation in embedding space only.
 4. Sheep full Mendeley archive (2350 imgs) unverified; results from deduped HF mirror (1123 raw).
 5. UU Equine: no direct download; request-only. Species-level LODO blocked; blur-quartile
    quality shift used as proxy (worst-group B0 0.809).

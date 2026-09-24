@@ -34,9 +34,11 @@ F. Blur-quartile shift proxy (species LODO blocked: equine gated).
 - Landmarks (`landmark_ap`, round 2 with scale jitter): val mAP 0.157 / AP50 0.661 /
   PCK 0.395; test mAP 0.996 / AP50 1.0 / PCK 0.997. High inter-cow variance (n=1 cow each) -
   reported, not hidden; downstream geometry uses GT keypoints.
-- RQ1 (`variance`, `baseline_loio`): procrustes concentrates identity (between-share 0.235 ->
-  0.615); per-cow-z removes it (cow-LDA 0.566 -> 0.125); injected-shift AUROC per-cow 0.917 /
-  0.961 vs population 0.825 / 0.892 (shifts 1.5 / 3.0).
+- RQ1-dairy (`dairy`, ReCowGnition 161 Holstein cows, embedding space): between-share 0.403;
+  cow-LDA 0.604 vs chance 0.006 -> per-cow-z 0.005. LOIO injected-shift (151 cows >=10 imgs):
+  per-cow 0.846/0.997 vs population 0.780/0.991 (shifts 1.5/3.0). Cross-session cosine gaps:
+  same-session 0.53 < cross-session 0.77 < different-cow 1.00 - session shift is real but smaller
+  than the identity gap (explains V_CS hardness in the benchmark paper).
 - RQ2 (`pain_mil_v2`, `ablation`): focal-loss MIL (val-selected) beats hard inheritance -
   balanced test AUROC 0.959 vs 0.885, F1 0.904 vs 0.809; natural prevalence AUROC 0.898 vs 0.874,
   F1 0.571 vs 0.383. B3 late-fusion keeps recall 1.00/0.86 at AUROC 0.948/0.893. Per-image
@@ -49,8 +51,10 @@ F. Blur-quartile shift proxy (species LODO blocked: equine gated).
   frames; shift3.0: 5.6/3.0/0.8 frames.
 
 ## 5. Limitations
-96 (not 108) unique cow tags; folder=02_13-sequence identity assumption; 1-cow val/test;
-sheep mirror is a 1123-image dedup subset; no equine/ReCowGnition yet; hours-ahead claim deferred.
+Beef geometry (5 cows) + dairy embeddings (161 cows) - joint geometry+identity pain data still
+absent; beef-trained landmarks do not transfer to dairy 112px crops (multi-box scatter, QC fig).
+96 (not 108) unique beef tags; 1-cow val/test; sheep mirror is a 1123-image dedup subset;
+no equine yet; hours-ahead claim deferred.
 
 ## 6. Next (on-request cattle-pain videos)
 Re-run Phases 3-7 unchanged via BasePainVideoDataset; sequence-level MIL; B4 gradient reversal.
