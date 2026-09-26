@@ -24,9 +24,14 @@
 9. Identity audit (leakage-safe: ref-fit stats, train-ref/score-probe): linear readout suppressed
    (beef LDA 0.29, dairy LDA 0.03) but NONLINEAR leakage persists (5NN 0.72 beef / 0.41 dairy).
    Claim is reduction, not removal. Procrustes rotation convention fixed (was transposed).
-10. CUSUM chronological (fit/calibrate/eval split): held-out delays larger than retrospective
-    ones (shift1.5: 25.2/11.6 frames). No longitudinal pain-onset data; no farm-deployment claims.
+10. CUSUM chronological, ref-only scaler: FAR-0.01 target NOT achievable (saturated at max
+    candidate); achieved FAR overshoots (0.044 vs 0.01 target); delays reported at achieved
+    rates with zero misses (censored separately). Trace plot resets on alarm, as scored.
+    "25->12 frames" was target-varying; state delays at achieved FAR. Frame units only.
 11. No validated cattle pain detector. BasePainVideoDataset is an interface stub: loader, frame
     sampling, temporal bags still to build when video data arrives.
 12. Cold-start curve (30 dairy cows): per-cow beats population from ~10-20 reference frames
     (0.785/0.812/0.848 at 10/20/40 vs pop 0.802). Small-n, embedding-space, synthetic shifts.
+13. Falsification battery (32 cows): wrong-animal control 0.747 < own 0.849 (animal-specific,
+    not more-data); covariance adds nothing over centering at n_ref=20; shrinkage best (0.868).
+    Perturbation dims frozen across shifts here (older dairy LOIO varied them - superseded).

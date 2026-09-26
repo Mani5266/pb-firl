@@ -10,6 +10,7 @@ SRC = ['src/front_end/geometry.py', 'src/front_end/ingest.py', 'src/front_end/tr
        'src/front_end/eval_landmarks.py', 'src/eval/variance_decomp.py', 'src/baseline/gaussian.py',
        'src/pain/train_sheep.py', 'src/pain/improve_mil.py', 'src/pain/fair_compare.py',
        'src/eval/sheep_stats.py', 'src/eval/dairy.py', 'src/eval/dairy_qc.py', 'src/eval/coldstart.py',
+       'src/eval/session_order.py', 'src/eval/falsify.py',
        'src/cusum/cusum.py', 'src/audit/leakage.py', 'src/eval/lodo.py']
 
 
@@ -23,7 +24,8 @@ def main():
            'models': {'mil': 'matched cells in pain_fair.json (shared split, BCE-only); legacy val-selected -> sheep_mil_best.pth',
                       'landmarks': 'krcnn R50-FPN R2: jitter(416,512,576) lr2e-5 x6ep (box-score top-1)'}}
     for name in ['landmark_ap', 'variance', 'baseline_loio', 'pain_sheep_g5', 'pain_mil_v2', 'pain_fair',
-                 'sheep_stats', 'dairy', 'coldstart', 'cusum', 'identity_audit', 'ablation']:
+                 'sheep_stats', 'dairy', 'session_order', 'coldstart', 'falsify',
+                 'cusum', 'identity_audit', 'ablation']:
         p = os.path.join(CACHE, name + '.json')
         rep[name] = json.load(open(p)) if os.path.exists(p) else None
     if os.path.exists(os.path.join(CACHE, 'pain_sheep.json')) and rep.get('pain_sheep_g5') is None:

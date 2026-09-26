@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from src.pain.train_sheep import MLP, AttMIL, metrics, boot_auroc, GRID, FILES, SHEEP
-from src.pain.improve_mil import strat_split
+from src.pain.improve_mil import grouped_strat_split
 from src.pain.fair_compare import MeanPool, fit_cell
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -33,7 +33,8 @@ def md_feat(P, mu, inv):
 def main():
     tr = np.load(os.path.join(CACHE, f'sheep_g{GRID}_train_raw.npz'))
     P, Xi, y = tr['pooled'], tr['inst'], tr['y'].astype(float)
-    tn, va = strat_split(tr['y'])
+    df_tr = pd.read_parquet(os.path.join(SHEEP, FILES['train_raw']))
+    tn, va = grouped_strat_split(tr['y'], df_tr.source_filename.values)
     pos_rate = (y[tn] == 1).mean()
     pw = torch.tensor([(1 - pos_rate) / pos_rate])
     mu = P[tn][y[tn] == 0].mean(0)

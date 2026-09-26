@@ -1,67 +1,55 @@
-# PB-FIRL paper outline (every claim -> reports/eval_report.json; corrected 2026-09-26 review pass)
+# PB-FIRL paper outline (every claim -> reports/eval_report.json; single-claim framing, 2026-09-26)
 
 ## Title
-Personalised Baselines with Weakly-Supervised Attention for Cross-Domain Livestock Pain
-Recognition: a proof-of-concept on public data
+An Animal's Own Reference History Improves Detection of Facial Change Beyond Population Models
 
-## Abstract
-No public dataset jointly provides cattle identity + pain labels, so we validate the
-personalisation mechanism cattle-side (CattleFace-RGBT, 5 cows x 1890 RGB frames; assumed
-reference, unlabelled) and the pain classifier cross-species (sheep SPFES proxy mirror).
-Per-cow deviation cuts linear cow-decodability (beef LDA 0.59 -> 0.29, dairy LDA 0.72 -> 0.03)
-while lifting injected-shift AUROC (0.917 vs 0.825 beef; 0.848 vs 0.796 dairy, 151 cows).
-Matched comparison: mean pooling >= attention (0.897 vs 0.864 BCE) on the dhash-clean split;
-nonlinear identity leakage persists (5NN 0.72 beef / 0.41 dairy on deviation features).
+## Central claim
+An animal's own reference history improves detection of meaningful change on later, unseen
+observations, beyond what population models and simple normalization can explain. Everything
+below tests that claim or its boundaries. Landmarks, MIL, CUSUM are tools, not accomplishments.
 
 ## 1. Introduction
-Problem, hypothesis, RQ1-RQ4 (see build guide). Honest scope: NOT a validated cattle pain
-detector; cross-species proof-of-concept + cattle personalisation validation.
+Population averages confound identity with state (Dhaliwal et al. 2025: near-perfect accuracy
+from identity shortcut). Hypothesis: per-animal reference comparison detects change that
+population models miss. Honest scope: mechanism validated on proxies + assumed-reference
+frames; NOT a validated cattle pain detector.
 
 ## 2. Related work
-Zhang et al. 2025 (unseen-video recall 0.56); Feighelstein et al. 2026 (post-hoc z-score vs our
-learned per-animal MVN); Dhaliwal et al. 2025 (identity shortcut -> our audit); Martvel et al.
-2024 (geometry-first); Neethirajan et al. 2026 (transfer fails, cow-AUC 0.400).
+Zhang et al. 2025; Feighelstein et al. 2026 (post-hoc z-score vs learned per-animal MVN);
+Dhaliwal et al. 2025 (identity shortcut); Martvel et al. 2024 (geometry-first);
+Neethirajan et al. 2026 (transfer fails).
 
 ## 3. Method
-A. Geometry front-end: Keypoint R-CNN R50-FPN, 13 kpts, frozen backbone, identity-aware split;
-   OKS success-rate metric (not COCO AP), true box areas.
-B. Per-animal MVN (Ledoit-Wolf) + Mahalanobis deviation, per-cow z-score, cold-start fallback.
-C. Patch-attention MIL (5x5 instances) vs mean-pool MLP, matched budgets, shared split, 3 seeds.
-D. Upper CUSUM (k=0.5) chronological: fit 40% / calibrate 30% / eval 30% per cow.
-E. Identity probes (LDA + 5NN), reference-fit stats, train-reference score-probe.
-F. Blur-quartile shift proxy (species LODO blocked: equine gated).
+Reference/probe discipline throughout: stats fit on reference only; probes trained on reference,
+scored on probe; chronological streams; source-grouped splits. Falsification controls share
+splits, features, perturbations, budgets.
 
 ## 4. Results (all from eval_report.json)
-- Landmarks (`landmark_ap`, corrected areas): val mean_success 0.046 / success@0.50 0.242 /
-  PCK 0.360; test 0.994 / 1.0 / 0.997. High inter-cow variance (n=1 cow each); downstream
-  geometry uses GT keypoints.
-- RQ1-beef (`variance`, `baseline_loio`): procrustes concentrates identity (between 0.24 -> 0.63,
-  LDA 0.87 -> 0.96); ref-fit per-cow-z cuts it (between 0.010, LDA 0.29); injected-shift AUROC
-  per-cow 0.917/0.961 vs population 0.825/0.892 (shifts 1.5/3.0) — directionally consistent but
-  NOT significant at n=5 (paired t p=0.24, Wilcoxon p=0.5); framed as consistent with dairy-scale.
-- RQ1-dairy (`dairy`, 161 Holsteins): between 0.40; LDA 0.72 -> 0.03, 5NN 0.67 -> 0.41;
-  LOIO (151 cows) per-cow 0.848/0.995 vs population 0.796/0.993. Cross-session cosine:
-  same 0.52 < cross 0.76 < different-cow 1.01.
-- RQ2 (`pain_fair`, matched, primary=test_raw dhash-clean): pool+BCE 0.897, pool+focal 0.893,
-  attn+BCE 0.864, attn+focal 0.880 (means of 3 seeds). Attention does not beat mean pooling;
-  loss effect small. Balanced `test` (0.92-0.93) flagged contaminated (60/74 dhash overlap).
-  Clean-source subset ~0.81 all cells (185 rows, 8 pos: noisy). B0 test_raw AUPRC 0.605
-  (base rate 0.129), cluster CI [0.476, 0.797]; AUROC cluster CI [0.843, 0.947].
-- RQ3 (`identity_audit`): linear readout suppressed (LDA 0.29 vs chance 0.20; dairy 0.03 vs 0.006)
-  but nonlinear leakage persists (5NN 0.72 beef / 0.41 dairy). Claim: reduction, not removal.
-- RQ4 (`ablation.worst_group_blur`, matched BCE models): worst-group B0 0.844, B1 0.788,
-  B2-MIL 0.761, B3 0.773. Species LODO deferred to §6.5 data.
-- CUSUM (`cusum`, chronological): taus {0.01: 50.7, 0.02: 50.7, 0.05: 27.9}; held-out delays
-  shift1.5: 25.2/25.2/11.6 frames; shift3.0: 11.4/11.4/6.6 frames.
+- Core (`falsify`, 32 dairy cows, frozen dims/budgets): population 0.829 = calibrated
+  population 0.829 < own-mean 0.849 ~= full own-model 0.849 < shrinkage 0.868; matched
+  wrong-animal reference 0.747. Benefit is animal-specific (not more data); mechanism is
+  centering (covariance adds nothing at n_ref=20); shrinkage best. Simple calibration does
+  NOT explain the operational gain.
+- Budget (`coldstart`, 30 cows): per-cow crosses population at ~10-20 reference frames
+  (0.785/0.812/0.848 at 10/20/40 vs pop 0.802).
+- Beef geometry (`variance`, `baseline_loio`, n=5, folder assumption): same direction
+  (0.917 vs 0.825) but not significant (paired t p=0.24) — supporting, not standalone.
+- Identity boundary (`identity_audit`, `dairy`, `session_order`): linear readout suppressed
+  (beef LDA 0.29, dairy 0.03, cross-session 0.008) but nonlinear leakage persists
+  (5NN 0.72 / 0.41 / 0.09). Nuisance dependence reduced, not removed.
+- Pain proxy (`pain_fair`, matched, test_raw dhash-clean): pool 0.883 ~= attn 0.875;
+  AUPRC 0.558 (base 0.129). Pooling is NOT the driver; kept as default.
+- Landmarks (`landmark_ap`): held-out success@0.50 0.24 — weak; geometry results are
+  oracle (GT keypoints), inference penalty unmeasured.
+- Early warning (`cusum`, chronological, ref-only scaler): FAR-0.01 constraint NOT met
+  (saturated); achieved FAR overshoots targets (0.044 vs 0.01); delays 22.8/8.0 (shift 1.5),
+  13.2/3.4 (shift 3.0), zero misses. Frame units (filenames, not timestamps).
 
 ## 5. Limitations
-Beef geometry (5 cows, folder=sequence assumption) + dairy embeddings (161 cows); no joint
-geometry+identity pain data. Landmark val weak (success@0.50 0.24, 1 cow). Sheep labels are
-expression proxies, not diagnoses; balanced test contaminated (use test_raw). Nonlinear identity
-leakage persists. No equine yet; hours-ahead claim deferred.
+Folder=sequence assumption; n=5 beef; proxy labels + contaminated balanced test (primary:
+test_raw); synthetic injections; nonlinear leakage open; front-end not in inference path;
+no equine; no validated pain detector. Interface stub for video phase.
 
-## 6. Next (on-request cattle-pain videos)
-Real labelled cattle eval with video/animal-grouped splits; sequence-level MIL; B4 gradient
-reversal; GT-vs-predicted landmark inference path; demo CLI. Cold-start finding to carry over:
-~10-20 reference frames suffice for per-cow to beat population (`coldstart`: 0.785/0.812/0.848
-at 10/20/40 frames vs pop 0.802, 30 dairy cows). Draft requests in reports/data_request_emails.md.
+## 6. Next
+Requested cattle-pain videos become a HELD-OUT test with predeclared protocol (frozen dims,
+budgets, controls). Sequence MIL, B4, demo CLI, GT-vs-predicted inference path.

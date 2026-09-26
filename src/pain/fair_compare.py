@@ -12,7 +12,7 @@ import torch.nn as nn
 import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from src.pain.train_sheep import AttMIL, metrics, boot_auroc, GRID, SHEEP, FILES
-from src.pain.improve_mil import FocalLoss, strat_split
+from src.pain.improve_mil import FocalLoss, grouped_strat_split
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 CACHE = os.path.join(ROOT, 'runs', 'features_cache')
@@ -61,7 +61,8 @@ def fit_cell(model, Xtr, ytr, Xva, yva, lossf, seed):
 def main():
     tr = np.load(os.path.join(CACHE, f'sheep_g{GRID}_train_raw.npz'))
     Xi, y = tr['inst'], tr['y'].astype(float)
-    tn, va = strat_split(tr['y'])  # single shared split (seed 42 inside)
+    df_tr = pd.read_parquet(os.path.join(SHEEP, FILES['train_raw']))
+    tn, va = grouped_strat_split(tr['y'], df_tr.source_filename.values)  # source-grouped shared split
     pos_rate = (y[tn] == 1).mean()
     cells = {
         'pool+BCE': (MeanPool, False),

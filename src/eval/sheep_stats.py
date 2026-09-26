@@ -9,7 +9,7 @@ from sklearn.metrics import roc_auc_score, average_precision_score
 import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from src.pain.train_sheep import GRID, SHEEP, FILES
-from src.pain.improve_mil import strat_split
+from src.pain.improve_mil import grouped_strat_split
 from src.pain.fair_compare import MeanPool, fit_cell
 import torch.nn as nn
 
@@ -23,7 +23,8 @@ def main():
     torch.manual_seed(SEED)
     tr = np.load(os.path.join(CACHE, f'sheep_g{GRID}_train_raw.npz'))
     Xi, y = tr['inst'], tr['y'].astype(float)
-    tn, va = strat_split(tr['y'])
+    df_tr = pd.read_parquet(os.path.join(SHEEP, FILES['train_raw']))
+    tn, va = grouped_strat_split(tr['y'], df_tr.source_filename.values)
     pos_rate = (y[tn] == 1).mean()
     bce = nn.BCEWithLogitsLoss(pos_weight=torch.tensor([(1 - pos_rate) / pos_rate]))
     m = fit_cell(MeanPool(), torch.from_numpy(Xi[tn]).float(), y[tn],

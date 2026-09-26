@@ -35,6 +35,20 @@ def strat_split(y, frac=0.2):
     return np.setdiff1d(np.arange(len(y)), va), va
 
 
+def grouped_strat_split(y, groups, frac=0.2):
+    """Split by source group (all crops of one source file in one partition)."""
+    rng = np.random.RandomState(SEED)
+    y = np.asarray(y)
+    groups = np.asarray(groups)
+    uniq = np.unique(groups)
+    glab = np.array([np.round(y[groups == g].mean()) for g in uniq]).astype(int)
+    va_g = np.r_[rng.choice(uniq[glab == 0], max(1, int((glab == 0).sum() * frac)), replace=False),
+                 rng.choice(uniq[glab == 1], max(1, int((glab == 1).sum() * frac)), replace=False)]
+    va = np.where(np.isin(groups, va_g))[0]
+    rng.shuffle(va)
+    return np.setdiff1d(np.arange(len(y)), va), va
+
+
 def fit(model, Xtr, ytr, Xva, yva, lossf, epochs=120):
     torch.manual_seed(SEED)
     opt = torch.optim.AdamW(model.parameters(), lr=1e-4, weight_decay=1e-4)
