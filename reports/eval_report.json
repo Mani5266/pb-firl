@@ -1,6 +1,6 @@
 {
  "seed": 42,
- "config_hash": "5ad264d7aa8f54c6",
+ "config_hash": "dab98d9a293f835e",
  "splits": {
   "cattle_rgb": {
    "train": [
@@ -18,44 +18,44 @@
   "sheep": "mirror train_raw(898)/test(74)/test_raw(225)"
  },
  "models": {
-  "mil": "AttMIL D=128 focal(gamma=2) val-selected -> sheep_mil_best.pth",
-  "landmarks": "krcnn R50-FPN R2: jitter(416,512,576) lr2e-5 x6ep"
+  "mil": "matched cells in pain_fair.json (shared split, BCE-only); legacy val-selected -> sheep_mil_best.pth",
+  "landmarks": "krcnn R50-FPN R2: jitter(416,512,576) lr2e-5 x6ep (box-score top-1)"
  },
  "landmark_ap": {
   "val": {
-   "mAP": 0.15698924731182795,
-   "AP50": 0.6612903225806451,
-   "AP75": 0.0,
+   "mean_success": 0.04623655913978495,
+   "success@0.50": 0.24193548387096775,
+   "success@0.75": 0.0,
    "per_thr": {
-    "0.5": 0.6612903225806451,
-    "0.55": 0.489247311827957,
-    "0.6": 0.25806451612903225,
-    "0.65": 0.10752688172043011,
-    "0.7": 0.053763440860215055,
-    "0.75": 0.0,
-    "0.8": 0.0,
-    "0.85": 0.0,
-    "0.9": 0.0,
-    "0.95": 0.0
+    "success@0.50": 0.24193548387096775,
+    "success@0.55": 0.11827956989247312,
+    "success@0.60": 0.053763440860215055,
+    "success@0.65": 0.04838709677419355,
+    "success@0.70": 0.0,
+    "success@0.75": 0.0,
+    "success@0.80": 0.0,
+    "success@0.85": 0.0,
+    "success@0.90": 0.0,
+    "success@0.95": 0.0
    },
-   "PCK@0.1": 0.3949545078577336,
+   "PCK@0.1": 0.35980148883374696,
    "n": 186
   },
   "test": {
-   "mAP": 0.9960000000000001,
-   "AP50": 1.0,
-   "AP75": 1.0,
+   "mean_success": 0.9942857142857143,
+   "success@0.50": 1.0,
+   "success@0.75": 1.0,
    "per_thr": {
-    "0.5": 1.0,
-    "0.55": 1.0,
-    "0.6": 1.0,
-    "0.65": 1.0,
-    "0.7": 1.0,
-    "0.75": 1.0,
-    "0.8": 1.0,
-    "0.85": 1.0,
-    "0.9": 0.9942857142857143,
-    "0.95": 0.9657142857142857
+    "success@0.50": 1.0,
+    "success@0.55": 1.0,
+    "success@0.60": 1.0,
+    "success@0.65": 1.0,
+    "success@0.70": 1.0,
+    "success@0.75": 1.0,
+    "success@0.80": 1.0,
+    "success@0.85": 0.9942857142857143,
+    "success@0.90": 0.9885714285714285,
+    "success@0.95": 0.96
    },
    "PCK@0.1": 0.9964835164835163,
    "n": 175
@@ -63,30 +63,30 @@
  },
  "variance": {
   "raw-centered 26D": {
-   "between": 0.23508258856925518,
-   "within": 0.7649174114307449,
-   "cow_lda": 0.8343915343915345,
+   "between": 0.23934041850773108,
+   "within": 0.760659581492269,
+   "cow_lda": 0.8658922914466737,
    "n_cows": 5,
    "n": 1890
   },
   "procrustes 26D": {
-   "between": 0.6147133021527569,
-   "within": 0.3852866978472431,
-   "cow_lda": 0.8619047619047621,
+   "between": 0.6314654445004358,
+   "within": 0.36853455549956415,
+   "cow_lda": 0.9577613516367476,
    "n_cows": 5,
    "n": 1890
   },
   "ROI-12D raw": {
-   "between": 0.1118149918606793,
-   "within": 0.8881850081393207,
-   "cow_lda": 0.5656084656084657,
+   "between": 0.10073802279290736,
+   "within": 0.8992619772070927,
+   "cow_lda": 0.590285110876452,
    "n_cows": 5,
    "n": 1890
   },
-  "ROI-12D per-cow-z": {
-   "between": 4.3794782103300074e-29,
-   "within": 1.0,
-   "cow_lda": 0.12486772486772488,
+  "ROI-12D per-cow-z (ref-fit)": {
+   "between": 0.009911173916304363,
+   "within": 0.9900888260836956,
+   "cow_lda": 0.29039070749736007,
    "n_cows": 5,
    "n": 1890
   }
@@ -201,199 +201,299 @@
    "n": 225
   }
  },
+ "pain_fair": {
+  "protocol": "shared strat 80/20 split; matched budgets; 3 seeds; primary=test_raw",
+  "contamination_note": "balanced test shares 60/74 dhashes with train_raw: FOR DIRECTION ONLY",
+  "cells": {
+   "pool+BCE": {
+    "test_raw": {
+     "seeds": [
+      0.8929,
+      0.8987,
+      0.9008
+     ],
+     "mean": 0.8974
+    },
+    "test": {
+     "seeds": [
+      0.9226,
+      0.9248,
+      0.924
+     ],
+     "mean": 0.9238
+    },
+    "test_raw_cleanSrc": {
+     "seeds": [
+      0.8051,
+      0.8107,
+      0.8185
+     ],
+     "mean": 0.8114
+    }
+   },
+   "pool+focal": {
+    "test_raw": {
+     "seeds": [
+      0.8883,
+      0.8951,
+      0.8953
+     ],
+     "mean": 0.8929
+    },
+    "test": {
+     "seeds": [
+      0.9226,
+      0.9204,
+      0.9204
+     ],
+     "mean": 0.9211
+    },
+    "test_raw_cleanSrc": {
+     "seeds": [
+      0.798,
+      0.8065,
+      0.815
+     ],
+     "mean": 0.8065
+    }
+   },
+   "attn+BCE": {
+    "test_raw": {
+     "seeds": [
+      0.8693,
+      0.8447,
+      0.8786
+     ],
+     "mean": 0.8642
+    },
+    "test": {
+     "seeds": [
+      0.927,
+      0.9226,
+      0.8912
+     ],
+     "mean": 0.9136
+    },
+    "test_raw_cleanSrc": {
+     "seeds": [
+      0.8086,
+      0.8157,
+      0.8679
+     ],
+     "mean": 0.8307
+    }
+   },
+   "attn+focal": {
+    "test_raw": {
+     "seeds": [
+      0.8981,
+      0.8554,
+      0.8865
+     ],
+     "mean": 0.88
+    },
+    "test": {
+     "seeds": [
+      0.9591,
+      0.9306,
+      0.9014
+     ],
+     "mean": 0.9304
+    },
+    "test_raw_cleanSrc": {
+     "seeds": [
+      0.8065,
+      0.7761,
+      0.846
+     ],
+     "mean": 0.8096
+    }
+   }
+  }
+ },
  "dairy": {
   "n_cows": 161,
   "n": 6838,
+  "probe_n": 3459,
   "chance": 0.0062,
-  "between": 0.4025,
-  "lda_raw": 0.6044,
-  "lda_percowz": 0.0045,
+  "between": 0.417,
+  "LDA_raw": 0.7187,
+  "LDA_per-cow-z": 0.0318,
+  "5NN_raw": 0.6707,
+  "5NN_per-cow-z": 0.4146,
   "loio": {
    "shift_1.5": {
-    "mean_per_cow": 0.8455,
-    "mean_pop": 0.7798
+    "mean_per_cow": 0.8478,
+    "mean_pop": 0.7958
    },
    "shift_3.0": {
-    "mean_per_cow": 0.9967,
-    "mean_pop": 0.991
+    "mean_per_cow": 0.9949,
+    "mean_pop": 0.9934
    }
   },
   "loio_cows": 151,
   "dist": {
-   "same_sess": 0.5294,
-   "cross_sess": 0.7747,
-   "diff_cow": 1.0
-  }
+   "same_sess": 0.5163,
+   "cross_sess": 0.7628,
+   "diff_cow": 1.0123
+  },
+  "protocol": "ref/probe split per cow; PCA+stats on ref; probes trained ref scored probe"
  },
  "cusum": {
   "taus": {
-   "0.01": 6.9366838773123325,
-   "0.02": 4.048723088588004,
-   "0.05": 1.552403310773815
+   "0.01": 50.73335355584156,
+   "0.02": 50.73335355584156,
+   "0.05": 27.941955812703682
   },
   "delays": {
    "shift_1.5": {
     "0.01": [
-     20.6,
+     25.2,
      5
     ],
     "0.02": [
-     16.8,
+     25.2,
      5
     ],
     "0.05": [
-     9.6,
+     11.6,
      5
     ]
    },
    "shift_3.0": {
     "0.01": [
-     5.6,
+     11.4,
      5
     ],
     "0.02": [
-     3.0,
+     11.4,
      5
     ],
     "0.05": [
-     0.8,
+     6.6,
      5
     ]
    }
   },
-  "k": 0.5
+  "k": 0.5,
+  "protocol": "fit 40% / calibrate 30% / eval 30% chronological per cow"
  },
  "identity_audit": {
   "acc": {
-   "raw ROI-12D": 0.5656,
-   "procrustes 26D": 0.8619,
-   "per-cow-z ROI-12D": 0.1249,
-   "z-deviation scalar": 0.2619
+   "LDA_raw ROI-12D": 0.5903,
+   "LDA_procrustes 26D": 0.9578,
+   "LDA_per-cow-z ROI-12D": 0.2904,
+   "LDA_z-deviation scalar": 0.2904,
+   "5NN_raw ROI-12D": 0.9673,
+   "5NN_procrustes 26D": 0.9979,
+   "5NN_per-cow-z ROI-12D": 0.7233,
+   "5NN_z-deviation scalar": 0.5143
   },
   "chance": 0.2,
   "n_cows": 5,
-  "n": 1890
+  "ref_n": 943,
+  "probe_n": 947,
+  "protocol": "per-cow ref/probe split; stats on ref; train ref score probe"
  },
  "ablation": {
-  "test": {
-   "B0": {
-    "recall": 0.973,
-    "f1": 0.809,
-    "auroc": 0.8846,
-    "ci": [
-     0.7974,
-     0.9552
-    ],
-    "n": 74
-   },
-   "B1": {
-    "recall": 1.0,
-    "f1": 0.6789,
-    "auroc": 0.8415,
-    "ci": [
-     0.739,
-     0.9313
-    ],
-    "n": 74
-   },
-   "B2-MIL": {
-    "recall": 0.8919,
-    "f1": 0.9041,
-    "auroc": 0.9591,
-    "ci": [
-     0.9064,
-     0.997
-    ],
-    "n": 74
-   },
-   "B3-fusion": {
-    "recall": 1.0,
-    "f1": 0.9024,
-    "auroc": 0.9481,
-    "ci": [
-     0.8876,
-     0.9927
-    ],
-    "n": 74
-   }
-  },
+  "protocol": "matched: shared split, BCE-only, 3 seeds; primary=test_raw",
   "test_raw": {
    "B0": {
-    "recall": 0.931,
-    "f1": 0.383,
-    "auroc": 0.8735,
+    "recall": 0.7241,
+    "f1": 0.5915,
+    "auroc": 0.8988,
     "ci": [
-     0.7925,
-     0.9375
+     0.8202,
+     0.9594
     ],
-    "n": 225
+    "n": 225,
+    "seed_aurocs": [
+     0.8929,
+     0.8987,
+     0.9008
+    ]
    },
    "B1": {
-    "recall": 1.0,
-    "f1": 0.2458,
-    "auroc": 0.8251,
+    "recall": 0.7931,
+    "f1": 0.5055,
+    "auroc": 0.8797,
     "ci": [
-     0.7522,
-     0.8862
+     0.8113,
+     0.9393
     ],
-    "n": 225
+    "n": 225,
+    "seed_aurocs": [
+     0.8807,
+     0.8767,
+     0.88
+    ]
    },
    "B2-MIL": {
-    "recall": 0.6897,
-    "f1": 0.5714,
-    "auroc": 0.8981,
+    "recall": 0.7241,
+    "f1": 0.6176,
+    "auroc": 0.8705,
     "ci": [
-     0.8266,
-     0.9527
+     0.7901,
+     0.9385
     ],
-    "n": 225
+    "n": 225,
+    "seed_aurocs": [
+     0.8717,
+     0.857,
+     0.7908
+    ]
    },
    "B3-fusion": {
-    "recall": 0.8621,
-    "f1": 0.5319,
-    "auroc": 0.8929,
+    "recall": 0.7586,
+    "f1": 0.5714,
+    "auroc": 0.8819,
     "ci": [
-     0.8214,
-     0.9456
+     0.813,
+     0.9438
     ],
-    "n": 225
+    "n": 225,
+    "seed_aurocs": [
+     0.8814,
+     0.8691,
+     0.87
+    ]
    }
   },
   "worst_group_blur": {
    "B0": {
-    "worst": 0.8094,
+    "worst": 0.8444,
     "groups": [
-     0.9907,
-     0.9031,
-     0.8118,
-     0.8094
+     1.0,
+     0.9291,
+     0.851,
+     0.8444
     ]
    },
    "B1": {
-    "worst": 0.7529,
+    "worst": 0.7882,
     "groups": [
-     0.9444,
-     0.8582,
-     0.7529,
-     0.7955
+     0.9907,
+     0.9102,
+     0.7882,
+     0.8322
     ]
    },
    "B2-MIL": {
-    "worst": 0.8558,
+    "worst": 0.7608,
     "groups": [
-     0.9815,
+     0.963,
      0.8558,
-     0.9176,
-     0.8706
+     0.7608,
+     0.8531
     ]
    },
    "B3-fusion": {
-    "worst": 0.844,
+    "worst": 0.7725,
     "groups": [
-     0.9815,
-     0.844,
-     0.9216,
-     0.8706
+     0.9907,
+     0.8913,
+     0.7725,
+     0.8601
     ]
    }
   },

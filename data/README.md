@@ -42,6 +42,10 @@
   `data/sheep_raw/data/*.parquet` — train 172 (86/86), test 74 (37/37),
   train_raw 898 (783/115), test_raw 225 (196/29); total raw 1123. Columns: image, label,
   label_name (no_pain/pain), blur_score, dhash, source_filename/url/doi, license (cc-by-4.0).
+- Split audit 2026-09-26: balanced `test` shares 60/74 dhashes with train_raw (CONTAMINATED,
+  direction-only). test_raw shares 1 dhash (primary eval); 40 source files overlap as different
+  crops - clean-source subset (185 rows / 8 pos) kept as sensitivity check. Labels are expression
+  proxies per the mirror card, not clinical diagnoses. Dedup guarantee not established upstream.
 - Related paper DOI: 10.1016/j.compag.2020.105528.
 
 ## 6.4 UU Equine Pain Face (horse/donkey, ROI pain 0–2 + landmarks) — REQUEST-ONLY, not on disk

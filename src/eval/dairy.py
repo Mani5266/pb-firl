@@ -1,16 +1,13 @@
 """Dairy-scale personalisation validation (ReCowGnition, 161 Holstein cows, no pain labels).
-Frozen ResNet-50 embeddings -> PCA-64: variance decomposition, LDA identity probe (raw vs
-per-cow-z), LOIO per-cow vs population injected-shift AUROC, cross-session distance analysis."""
+Leakage-safe protocol (review fix): per-cow reference/probe split; PCA fit on reference only;
+per-cow stats from reference only; probes (LDA + 5NN) trained on reference, scored on probe.
+LOIO uses per-cow PCA-on-rest. Frozen ResNet-50 embeddings (cached; torch imported lazily)."""
 import os
 import numpy as np
 import pandas as pd
-import torch
-import torch.nn as nn
-from PIL import Image
-from torchvision.models import resnet50, ResNet50_Weights
 from sklearn.decomposition import PCA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-from sklearn.model_selection import cross_val_score
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.covariance import LedoitWolf
 from sklearn.metrics import roc_auc_score
 import matplotlib
@@ -23,40 +20,67 @@ FIG = os.path.join(ROOT, 'reports', 'figures')
 SEED = 42
 
 
+def embed_if_missing(df, out):
+    import torch
+    import torch.nn as nn
+    from PIL import Image
+    from torchvision.models import resnet50, ResNet50_Weights
+    torch.manual_seed(SEED)
+    dev = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    m = resnet50(weights=ResNet50_Weights.DEFAULT)
+    feat = nn.Sequential(*list(m.children())[:-2]).eval().to(dev)
+    tf = ResNet50_Weights.DEFAULT.transforms()
+    E = []
+    with torch.no_grad():
+        for i in range(0, len(df), 64):
+            imgs = [tf(Image.open(p).convert('RGB')) for p in df.file.iloc[i:i+64]]
+            E.append(feat(torch.stack(imgs).to(dev)).mean((2, 3)).cpu().numpy())
+    E = np.concatenate(E)
+    np.savez_compressed(out, E=E)
+    print('embedded', E.shape)
+
+
 def main():
     rng = np.random.RandomState(SEED)
-    torch.manual_seed(SEED)
     df = pd.read_parquet(os.path.join(CACHE, 'manifest_recow.parquet'))
     out = os.path.join(CACHE, 'dairy_emb.npz')
     if not os.path.exists(out):
-        dev = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        m = resnet50(weights=ResNet50_Weights.DEFAULT)
-        feat = nn.Sequential(*list(m.children())[:-2]).eval().to(dev)
-        tf = ResNet50_Weights.DEFAULT.transforms()
-        E = []
-        with torch.no_grad():
-            for i in range(0, len(df), 64):
-                imgs = [tf(Image.open(p).convert('RGB')) for p in df.file.iloc[i:i+64]]
-                E.append(feat(torch.stack(imgs).to(dev)).mean((2, 3)).cpu().numpy())
-        E = np.concatenate(E)
-        np.savez_compressed(out, E=E)
-        print('embedded', E.shape)
+        embed_if_missing(df, out)
     E = np.load(out)['E']
     y = df.cow.values
     sess = df.session.values
     cows = np.unique(y)
     print('cows:', len(cows), 'chance:', round(1/len(cows), 4))
-    P = PCA(n_components=64, random_state=SEED).fit_transform(E)
-    # variance decomposition
-    mu = P.mean(0)
-    sb = sum((y == c).sum() * ((P[y == c].mean(0) - mu) ** 2).sum() for c in cows)
-    st = ((P - mu) ** 2).sum()
-    between = float(sb / (st + 1e-12))
-    acc_raw = float(cross_val_score(LinearDiscriminantAnalysis(), P, y, cv=5).mean())
-    Z = np.stack([(r - P[y == c].mean(0)) / (P[y == c].std(0) + 1e-9) for r, c in zip(P, y)])
-    acc_z = float(cross_val_score(LinearDiscriminantAnalysis(), Z, y, cv=5).mean())
-    print(f'between={between:.3f} LDA raw={acc_raw:.3f} LDA per-cow-z={acc_z:.3f}')
-    # LOIO injected-shift: cows with >=10 imgs
+    # per-cow reference/probe split (singletons -> reference only, never scored)
+    ref_idx, probe_idx = [], []
+    for c in cows:
+        ix = np.where(y == c)[0].copy()
+        rng.shuffle(ix)
+        h = max(1, len(ix) // 2)
+        ref_idx.extend(ix[:h])
+        probe_idx.extend(ix[h:])
+    ref_idx, probe_idx = np.array(ref_idx), np.array(probe_idx)
+    pca = PCA(n_components=64, random_state=SEED).fit(E[ref_idx])
+    Pr, Pp = pca.transform(E[ref_idx]), pca.transform(E[probe_idx])
+    yr, yp = y[ref_idx], y[probe_idx]
+    # scatter share on probe
+    mu = Pp.mean(0)
+    sb = sum((yp == c).sum() * ((Pp[yp == c].mean(0) - mu) ** 2).sum() for c in np.unique(yp))
+    between = float(sb / (((Pp - mu) ** 2).sum() + 1e-12))
+    # per-cow stats from reference only
+    ref_mean = {c: Pr[yr == c].mean(0) for c in cows}
+    ref_std = {c: Pr[yr == c].std(0) + 1e-9 for c in cows}
+    Zr = np.stack([(r - ref_mean[c]) / ref_std[c] for r, c in zip(Pr, yr)])
+    Zp = np.stack([(r - ref_mean[c]) / ref_std[c] for r, c in zip(Pp, yp)])
+    probes = {'LDA': LinearDiscriminantAnalysis(), '5NN': KNeighborsClassifier(5)}
+    acc = {}
+    for pname, clf in probes.items():
+        for rname, Xtr, Xte in [('raw', Pr, Pp), ('per-cow-z', Zr, Zp)]:
+            clf.fit(Xtr, yr)
+            a = float(clf.score(Xte, yp))
+            acc[f'{pname}_{rname}'] = round(a, 4)
+            print(f'{pname} {rname}: {a:.4f}')
+    # LOIO injected-shift with per-cow PCA-on-rest (cows with >=10 imgs)
     big = [c for c in cows if (y == c).sum() >= 10]
     print('loio cows:', len(big))
     res_loio = {}
@@ -64,14 +88,17 @@ def main():
         apc, apo = [], []
         dim = rng.choice(64, 8, replace=False)
         for c in big:
-            idx = np.where(y == c)[0]
+            idx = np.where(y == c)[0].copy()
             rng.shuffle(idx)
             h = idx[:len(idx)//2]
             rest = np.setdiff1d(np.arange(len(y)), idx)
-            mu_g = P[rest].mean(0)
-            sd_g = P[rest].std(0) + 1e-9
-            Zf, Ze = (P[h] - mu_g)/sd_g, (P[np.setdiff1d(idx, h)] - mu_g)/sd_g
-            lw_s, lw_p = LedoitWolf().fit(Zf), LedoitWolf().fit((P[rest]-mu_g)/sd_g)
+            pc = PCA(n_components=64, random_state=SEED).fit(E[rest])
+            R0, Cf, Ce = pc.transform(E[rest]), pc.transform(E[h]), \
+                pc.transform(E[np.setdiff1d(idx, h)])
+            mu_g = R0.mean(0)
+            sd_g = R0.std(0) + 1e-9
+            Zf, Ze = (Cf - mu_g)/sd_g, (Ce - mu_g)/sd_g
+            lw_s, lw_p = LedoitWolf().fit(Zf), LedoitWolf().fit((R0-mu_g)/sd_g)
             md = lambda lw, ZZ: np.sqrt(((ZZ-lw.location_) @ np.linalg.inv(lw.covariance_) * (ZZ-lw.location_)).sum(1))
             Zi = Ze.copy()
             Zi[:, dim] += shift
@@ -82,37 +109,42 @@ def main():
         res_loio[f'shift_{shift}'] = {'mean_per_cow': round(float(np.mean(apc)), 4),
                                       'mean_pop': round(float(np.mean(apo)), 4)}
         print(f'shift={shift} per-cow={np.mean(apc):.4f} pop={np.mean(apo):.4f}')
-    # cross-session distances (cosine on PCA-64, sampled pairs)
-    Pn = P / (np.linalg.norm(P, axis=1, keepdims=True) + 1e-9)
-    d_same_sess, d_cross_sess, d_diff = [], [], []
-    by_cow = {c: np.where(y == c)[0] for c in big}
-    for c, ix in by_cow.items():
-        s = sess[ix]
+    # cross-session distances on probe embeddings
+    Pn = Pp / (np.linalg.norm(Pp, axis=1, keepdims=True) + 1e-9)
+    sp = sess[probe_idx]
+    d_same, d_cross, d_diff = [], [], []
+    by_cow = {}
+    for j, c in enumerate(yp):
+        by_cow.setdefault(c, []).append(j)
+    for c, js in by_cow.items():
+        if len(js) < 2:
+            continue
         for _ in range(20):
-            a, b = rng.choice(ix, 2, replace=False)
-            (d_same_sess if s[ix.tolist().index(a)] == s[ix.tolist().index(b)] else d_cross_sess).append(
-                float(1 - Pn[a] @ Pn[b]))
+            a, b = rng.choice(js, 2, replace=False)
+            (d_same if sp[a] == sp[b] else d_cross).append(float(1 - Pn[a] @ Pn[b]))
     for _ in range(2000):
-        a = rng.randint(len(y))
-        b = rng.randint(len(y))
-        if y[a] != y[b]:
+        a = rng.randint(len(yp))
+        b = rng.randint(len(yp))
+        if yp[a] != yp[b]:
             d_diff.append(float(1 - Pn[a] @ Pn[b]))
-    res = {'n_cows': len(cows), 'n': len(df), 'chance': round(1/len(cows), 4),
-           'between': round(between, 4), 'lda_raw': round(acc_raw, 4), 'lda_percowz': round(acc_z, 4),
+    res = {'n_cows': len(cows), 'n': len(df), 'probe_n': len(yp), 'chance': round(1/len(cows), 4),
+           'between': round(between, 4), **acc,
            'loio': res_loio, 'loio_cows': len(big),
-           'dist': {'same_sess': round(float(np.mean(d_same_sess)), 4),
-                    'cross_sess': round(float(np.mean(d_cross_sess)), 4),
-                    'diff_cow': round(float(np.mean(d_diff)), 4)}}
+           'dist': {'same_sess': round(float(np.mean(d_same)), 4),
+                    'cross_sess': round(float(np.mean(d_cross)), 4),
+                    'diff_cow': round(float(np.mean(d_diff)), 4)},
+           'protocol': 'ref/probe split per cow; PCA+stats on ref; probes trained ref scored probe'}
     print(res['dist'])
     plt.figure(figsize=(10, 4))
     plt.subplot(1, 2, 1)
-    plt.bar(['raw', 'per-cow-z'], [acc_raw, acc_z])
+    plt.bar(list(acc), list(acc.values()))
     plt.axhline(1/len(cows), color='red', ls='--')
-    plt.title(f'Dairy cow-ID LDA (161 cows, chance={1/len(cows):.3f})')
+    plt.xticks(rotation=15)
+    plt.title(f'Dairy cow-ID probes (161 cows, chance={1/len(cows):.3f})')
     plt.subplot(1, 2, 2)
     plt.bar(['same\nsession', 'cross\nsession', 'different\ncow'],
             [res['dist']['same_sess'], res['dist']['cross_sess'], res['dist']['diff_cow']])
-    plt.title('Mean cosine distance (PCA-64)')
+    plt.title('Mean cosine distance, probe PCA-64')
     plt.tight_layout()
     plt.savefig(os.path.join(FIG, 'dairy_audit.png'), dpi=100)
     import json

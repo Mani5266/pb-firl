@@ -1,6 +1,6 @@
-"""Phase 3: per-animal Gaussian baseline (Ledoit-Wolf) on healthy-only ROI-12D frames.
-CattleFace has no pain labels -> all frames treated as healthy (recorded limitation).
-Eval: LOIO-style held-out log-likelihood + injected-deviation AUROC, per-cow vs population."""
+"""Phase 3: per-animal Gaussian baseline (Ledoit-Wolf) on assumed-reference ROI-12D frames.
+CattleFace has no pain labels -> all frames are UNLABELLED assumed reference (not confirmed healthy).
+Eval: LOIO injected-deviation AUROC, per-cow vs population."""
 import os
 import numpy as np
 import pandas as pd

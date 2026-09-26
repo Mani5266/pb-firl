@@ -1,12 +1,12 @@
-# Variance decomposition (Phase 2, GT keypoints, RGB, 5 cows × 1890 imgs)
+# Variance decomposition (Phase 2, GT keypoints, RGB, 5 cows x 1890 imgs)
 
-Chance cow accuracy: 0.20. LDA 5-fold CV.
+Protocol: per-cow reference/probe split; stats fit on reference, metrics on probe; LDA trained on reference, scored on probe. Chance cow accuracy: 0.20.
 
 | representation | between | within | cow-LDA acc |
 |---|---|---|---|
-| raw-centered 26D | 0.235 | 0.765 | 0.834 |
-| procrustes 26D | 0.615 | 0.385 | 0.862 |
-| ROI-12D raw | 0.112 | 0.888 | 0.566 |
-| ROI-12D per-cow-z | 0.000 | 1.000 | 0.125 |
+| raw-centered 26D | 0.239 | 0.761 | 0.866 |
+| procrustes 26D | 0.631 | 0.369 | 0.958 |
+| ROI-12D raw | 0.101 | 0.899 | 0.590 |
+| ROI-12D per-cow-z (ref-fit) | 0.010 | 0.990 | 0.290 |
 
-Interpretation: Procrustes alignment removes pose/scale nuisance; per-cow z-scoring removes the between-cow morphology share that remains. The drop in cow-decodability from raw to deviation features is the empirical case for personalisation (RQ1/RQ3). Identity labels assume folders = 02_13 sequences (see data/README).
+Interpretation: Procrustes alignment concentrates identity (pose nuisance removed); per-cow z-scoring with reference-fit stats cuts linear cow-decodability on unseen frames. Identity labels assume folders = 02_13 sequences (see data/README).

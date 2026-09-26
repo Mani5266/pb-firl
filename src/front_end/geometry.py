@@ -20,9 +20,10 @@ def umeyama(src, dst):
     mu_s, mu_d = src.mean(0), dst.mean(0)
     S = ((src - mu_s).T @ (dst - mu_d)) / len(src)
     U, D, Vt = np.linalg.svd(S)
-    R = U @ np.diag([1.0, np.sign(np.linalg.det(U @ Vt))]) @ Vt
+    # R maps column vectors: dst ~= s*R*src + t  =>  R = V*diag*U' (Umeyama)
+    R = Vt.T @ np.diag([1.0, np.sign(np.linalg.det(Vt.T @ U.T))]) @ U.T
     var = ((src - mu_s) ** 2).sum() / len(src)
-    s = (D * np.array([1.0, np.sign(np.linalg.det(U @ Vt))])).sum() / (var + 1e-12)
+    s = (D * np.array([1.0, np.sign(np.linalg.det(Vt.T @ U.T))])).sum() / (var + 1e-12)
     t = mu_d - s * (R @ mu_s)
     return s, R, t
 
@@ -85,11 +86,17 @@ def oks(pred, gt, vis, area, sigma=0.10):
     return float(e[v].mean()) if v.any() else 0.0
 
 
+def box_area(b):
+    """Area of [x1,y1,x2,y2] box. (x2*y2 is the classic origin-product bug.)"""
+    return float(max(0.0, b[2] - b[0]) * max(0.0, b[3] - b[1]))
+
+
 def oks_map(records):
-    """records: list of (oks, score). Single pred per gt -> AP@t = frac(oks>t)."""
+    """Mean OKS success rate over thresholds (NOT COCO AP: single pred/gt, no score ranking)."""
     thrs = np.arange(0.5, 1.0, 0.05)
-    ap = {}
+    s = {}
     for t in thrs:
-        ap[round(float(t), 2)] = float(np.mean([o > t for o, _ in records])) if records else 0.0
-    aps = list(ap.values())
-    return {'mAP': float(np.mean(aps)), 'AP50': ap[0.5], 'AP75': ap[0.75], 'per_thr': ap}
+        s[f'success@{round(float(t), 2):.2f}'] = float(np.mean([o > t for o, _ in records])) if records else 0.0
+    vals = list(s.values())
+    return {'mean_success': float(np.mean(vals)), 'success@0.50': s['success@0.50'],
+            'success@0.75': s['success@0.75'], 'per_thr': s}

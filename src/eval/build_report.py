@@ -8,7 +8,8 @@ CACHE = os.path.join(ROOT, 'runs', 'features_cache')
 SEED = 42
 SRC = ['src/front_end/geometry.py', 'src/front_end/ingest.py', 'src/front_end/train_landmarks.py',
        'src/front_end/eval_landmarks.py', 'src/eval/variance_decomp.py', 'src/baseline/gaussian.py',
-       'src/pain/train_sheep.py', 'src/pain/improve_mil.py', 'src/eval/dairy.py',
+       'src/pain/train_sheep.py', 'src/pain/improve_mil.py', 'src/pain/fair_compare.py',
+       'src/eval/dairy.py', 'src/eval/dairy_qc.py',
        'src/cusum/cusum.py', 'src/audit/leakage.py', 'src/eval/lodo.py']
 
 
@@ -19,10 +20,10 @@ def main():
     rep = {'seed': SEED, 'config_hash': h.hexdigest()[:16],
            'splits': {'cattle_rgb': {'train': ['1', '25', '50'], 'val': ['17'], 'test': ['64']},
                        'sheep': 'mirror train_raw(898)/test(74)/test_raw(225)'},
-           'models': {'mil': 'AttMIL D=128 focal(gamma=2) val-selected -> sheep_mil_best.pth',
-                      'landmarks': 'krcnn R50-FPN R2: jitter(416,512,576) lr2e-5 x6ep'}}
-    for name in ['landmark_ap', 'variance', 'baseline_loio', 'pain_sheep_g5', 'pain_mil_v2', 'dairy',
-                 'cusum', 'identity_audit', 'ablation']:
+           'models': {'mil': 'matched cells in pain_fair.json (shared split, BCE-only); legacy val-selected -> sheep_mil_best.pth',
+                      'landmarks': 'krcnn R50-FPN R2: jitter(416,512,576) lr2e-5 x6ep (box-score top-1)'}}
+    for name in ['landmark_ap', 'variance', 'baseline_loio', 'pain_sheep_g5', 'pain_mil_v2', 'pain_fair',
+                 'dairy', 'cusum', 'identity_audit', 'ablation']:
         p = os.path.join(CACHE, name + '.json')
         rep[name] = json.load(open(p)) if os.path.exists(p) else None
     if os.path.exists(os.path.join(CACHE, 'pain_sheep.json')) and rep.get('pain_sheep_g5') is None:
