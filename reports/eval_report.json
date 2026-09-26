@@ -1,6 +1,6 @@
 {
  "seed": 42,
- "config_hash": "dab98d9a293f835e",
+ "config_hash": "cfd3ccc629e63db3",
  "splits": {
   "cattle_rgb": {
    "train": [
@@ -311,6 +311,20 @@
    }
   }
  },
+ "sheep_stats": {
+  "auroc": 0.8929,
+  "auprc": 0.6051,
+  "auroc_cluster_ci": [
+   0.8431,
+   0.947
+  ],
+  "auprc_cluster_ci": [
+   0.4756,
+   0.797
+  ],
+  "n": 225,
+  "n_clusters": 217
+ },
  "dairy": {
   "n_cows": 161,
   "n": 6838,
@@ -338,6 +352,27 @@
    "diff_cow": 1.0123
   },
   "protocol": "ref/probe split per cow; PCA+stats on ref; probes trained ref scored probe"
+ },
+ "coldstart": {
+  "n_ref": {
+   "5": {
+    "per_cow_mean": 0.7529,
+    "cows": 30
+   },
+   "10": {
+    "per_cow_mean": 0.7848,
+    "cows": 30
+   },
+   "20": {
+    "per_cow_mean": 0.8117,
+    "cows": 30
+   },
+   "40": {
+    "per_cow_mean": 0.8478,
+    "cows": 30
+   }
+  },
+  "pop_mean": 0.8023
  },
  "cusum": {
   "taus": {

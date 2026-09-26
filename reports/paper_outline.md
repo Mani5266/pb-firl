@@ -37,14 +37,16 @@ F. Blur-quartile shift proxy (species LODO blocked: equine gated).
   geometry uses GT keypoints.
 - RQ1-beef (`variance`, `baseline_loio`): procrustes concentrates identity (between 0.24 -> 0.63,
   LDA 0.87 -> 0.96); ref-fit per-cow-z cuts it (between 0.010, LDA 0.29); injected-shift AUROC
-  per-cow 0.917/0.961 vs population 0.825/0.892 (shifts 1.5/3.0).
+  per-cow 0.917/0.961 vs population 0.825/0.892 (shifts 1.5/3.0) — directionally consistent but
+  NOT significant at n=5 (paired t p=0.24, Wilcoxon p=0.5); framed as consistent with dairy-scale.
 - RQ1-dairy (`dairy`, 161 Holsteins): between 0.40; LDA 0.72 -> 0.03, 5NN 0.67 -> 0.41;
   LOIO (151 cows) per-cow 0.848/0.995 vs population 0.796/0.993. Cross-session cosine:
   same 0.52 < cross 0.76 < different-cow 1.01.
 - RQ2 (`pain_fair`, matched, primary=test_raw dhash-clean): pool+BCE 0.897, pool+focal 0.893,
   attn+BCE 0.864, attn+focal 0.880 (means of 3 seeds). Attention does not beat mean pooling;
   loss effect small. Balanced `test` (0.92-0.93) flagged contaminated (60/74 dhash overlap).
-  Clean-source subset ~0.81 all cells (185 rows, 8 pos: noisy).
+  Clean-source subset ~0.81 all cells (185 rows, 8 pos: noisy). B0 test_raw AUPRC 0.605
+  (base rate 0.129), cluster CI [0.476, 0.797]; AUROC cluster CI [0.843, 0.947].
 - RQ3 (`identity_audit`): linear readout suppressed (LDA 0.29 vs chance 0.20; dairy 0.03 vs 0.006)
   but nonlinear leakage persists (5NN 0.72 beef / 0.41 dairy). Claim: reduction, not removal.
 - RQ4 (`ablation.worst_group_blur`, matched BCE models): worst-group B0 0.844, B1 0.788,
@@ -60,4 +62,6 @@ leakage persists. No equine yet; hours-ahead claim deferred.
 
 ## 6. Next (on-request cattle-pain videos)
 Real labelled cattle eval with video/animal-grouped splits; sequence-level MIL; B4 gradient
-reversal; GT-vs-predicted landmark inference path; demo CLI.
+reversal; GT-vs-predicted landmark inference path; demo CLI. Cold-start finding to carry over:
+~10-20 reference frames suffice for per-cow to beat population (`coldstart`: 0.785/0.812/0.848
+at 10/20/40 frames vs pop 0.802, 30 dairy cows). Draft requests in reports/data_request_emails.md.

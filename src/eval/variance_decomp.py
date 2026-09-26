@@ -81,7 +81,10 @@ def main():
             f.write(f'| {n} | {b:.3f} | {w:.3f} | {a:.3f} |\n')
         f.write('\nInterpretation: Procrustes alignment concentrates identity (pose nuisance removed); '
                 'per-cow z-scoring with reference-fit stats cuts linear cow-decodability on unseen '
-                'frames. Identity labels assume folders = 02_13 sequences (see data/README).\n')
+                'frames. Caveat: the per-cow-z between-share is near zero partly by construction '
+                '(within-cow centring removes mean differences); rely on the LDA/5NN audit '
+                '(identity_audit.json) for the decodability claim. Identity labels assume folders '
+                '= 02_13 sequences (see data/README).\n')
     import json
     json.dump({n: {'between': b, 'within': w, 'cow_lda': a, 'n_cows': n_cows, 'n': len(df)}
                for n, b, w, a in rows},

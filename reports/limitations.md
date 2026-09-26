@@ -16,7 +16,8 @@
    Earlier 0.66 AP50 was an x2*y2 area bug (fixed). Metric renamed: mean OKS success rate,
    not COCO AP. Downstream geometry uses GT keypoints.
 7. Cattle frames are UNLABELLED assumed reference (not confirmed healthy); baseline validated on
-   injected deviations, not real pain.
+   injected deviations, not real pain. Beef n=5 gap not significant (paired t p=0.24) — beef is
+   supporting evidence for the dairy-scale finding, not standalone proof.
 8. Matched comparison (shared split, matched budgets, 3 seeds): mean pooling >= attention
    (test_raw 0.897 vs 0.864 BCE); focal-loss gain was a protocol artifact. Earlier MIL-win
    claim withdrawn. Sequence-level MIL + B4 deferred to video phase.
@@ -27,3 +28,5 @@
     ones (shift1.5: 25.2/11.6 frames). No longitudinal pain-onset data; no farm-deployment claims.
 11. No validated cattle pain detector. BasePainVideoDataset is an interface stub: loader, frame
     sampling, temporal bags still to build when video data arrives.
+12. Cold-start curve (30 dairy cows): per-cow beats population from ~10-20 reference frames
+    (0.785/0.812/0.848 at 10/20/40 vs pop 0.802). Small-n, embedding-space, synthetic shifts.

@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+title: "PB-FIRL: Personalised, Weakly-Supervised, Identity-Audited Livestock Pain Recognition"
+authors:
+  - family-names: Mani5266
+message: "If you use this software, please cite it as below."
+repository-code: "https://github.com/Mani5266/pb-firl"
+license: MIT
+keywords:
+  - cattle pain recognition
+  - personalised baselines
+  - multiple-instance learning
+  - identity leakage
