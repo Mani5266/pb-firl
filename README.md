@@ -21,6 +21,39 @@ Key corrections from review: landmark area bug fixed (0.66 was inflated); balanc
 found contaminated (60/74 dhash overlap) — primary eval is the dhash-clean `test_raw`;
 audit/CUSUM made leakage-safe; Procrustes rotation fixed. See `reports/limitations.md`.
 
+## Architecture
+
+```
+                ┌──────────────────── FRONT-END ────────────────────┐
+                │  CattleFace-RGBT 2560x1440                        │
+                │  Keypoint R-CNN R50-FPN → 13 kpts (frozen body)   │
+                │  Procrustes align → 12-D ROI descriptors          │
+                │  (eye/ear/muzzle geometry, scale-normalized)      │
+                └───────────────────────┬───────────────────────────┘
+                                        │
+            ┌───────────────────────────┼───────────────────────────┐
+            ▼                           ▼                           ▼
+   PERSONALISATION              PAIN (sheep proxy)            EARLY WARNING
+   per-cow MVN (Ledoit-Wolf)    frozen ResNet-50 → 25         upper CUSUM (k=0.5)
+   Mahalanobis deviation,       patch instances →             on z-deviation stream;
+   per-cow z-score;             mean-pool MLP (default)       fit/calibrate/eval split
+   cold-start → population      attention MIL (tested)        chronological per cow
+            │                           │                           │
+            └───────────────────────────┼───────────────────────────┘
+                                        ▼
+                          AUDIT + ROBUSTNESS (over everything)
+                          LDA/5NN identity probes (ref-fit stats);
+                          blur-quartile worst-group; LOIO; falsification
+                          controls (wrong-animal, shrinkage, calibration)
+```
+
+Module map: `src/front_end/` (ingest, geometry, train/retrain/eval_landmarks) ·
+`src/baseline/` (per-cow Gaussian + cold-start) · `src/pain/` (sheep embeddings, MIL,
+fair 4-cell comparison) · `src/cusum/` · `src/audit/` (identity leakage) ·
+`src/eval/` (variance, dairy, session-order, cold-start, falsify, lodo, report builder) ·
+`src/datasets/` (loaders + video interface stub). Reference/probe discipline everywhere:
+nothing fit on reference ever sees probe frames; all seeds fixed at 42.
+
 ## Repro (data download excluded)
 ```powershell
 pip install -r requirements.txt
@@ -53,6 +86,23 @@ python -m unittest discover -s tests      # 20 math/count/integrity checks
   validation only (no pain labels).
 - **UU Equine** (request-only) + **cattle-pain videos** (on request): still missing — unlock
   species LODO and real cattle-pain eval. `src/datasets/base.py` is an interface stub.
+
+## What we've achieved to date
+
+- **Public-data pipeline end-to-end** (Phases 0–8): 4 datasets verified/logged, 20/20 tests green,
+  one-command repro chain, every number in `reports/eval_report.json` with config hash + seed.
+- **Central claim tested, not just stated**: 6-control falsification battery — own-reference beats
+  matched wrong-animal reference (0.849 vs 0.747); shrinkage best (0.868); calibration-only
+  explains nothing (0.829 = 0.829). Mechanism identified: centering, not covariance.
+- **Dairy scale**: 161 Holsteins — linear identity readout 0.72→0.03, LOIO 0.848 vs 0.796,
+  cross-session ordering same<cross<different-cow, cold-start crossing at ~10–20 frames.
+- **Honest negatives published**: attention ≯ pooling (0.875 vs 0.883 matched); nonlinear identity
+  leakage persists (5NN 0.72/0.41); balanced sheep test withdrawn as contaminated; landmark val
+  weak (0.24); beef n=5 not significant (p=0.24) — supporting evidence only.
+- **Two independent review passes applied**: area bug, rotation fix, leakage-safe protocols,
+  chronological CUSUM with saturation/miss reporting, cluster CIs, AUPRC, LICENSE/CITATION.
+- **Ready for the held-out test**: 6 data-request email drafts in `reports/data_request_emails.md`;
+  video interface stub + predeclared protocol waiting for cattle-pain videos.
 
 ## Honest scope
 Proof-of-concept with trustworthy numbers — **not** a validated cattle pain detector.
