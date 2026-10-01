@@ -1,6 +1,40 @@
 {
  "seed": 42,
- "config_hash": "5a081f8d519905d6",
+ "config_hash": "a2f6efb1203a80ff",
+ "source_hashes": {
+  "src/front_end/geometry.py": "08d0acdfe4f0afe3864b3683ca6b9c28f8cf3eebb5349f5f065c906c58229722",
+  "src/front_end/ingest.py": "d35ebe7b26038b87bbd8ecec8588c21d6cee9b6f1341a16370449382743d629c",
+  "src/front_end/train_landmarks.py": "1be23994e8f3bd6fdb596a990fbdf92e386315cd4c74e87d7179a950ce178de8",
+  "src/front_end/eval_landmarks.py": "67068d059e61ca9822946ad429038843eae2709d0c4b5602a487c9e9ac335791",
+  "src/eval/variance_decomp.py": "f02eff3baf3e75979ded6c7b60a2afab2e4b0c205ebc31612f73cdea4c60aaa7",
+  "src/baseline/gaussian.py": "f618f18b4b903206eb4ef0003803471f519fab36c2ba5e15e0df77c22dfa7efc",
+  "src/pain/train_sheep.py": "ebbb0983f90f03cb7ab1b563a732ce2c438de70417a4d43927ad08235334a8ca",
+  "src/pain/improve_mil.py": "02adb9a8093e467fb29c69ec34889805bba0fe7eea8098c424f4ec254f2d2cde",
+  "src/pain/fair_compare.py": "d41b1d38bce521cd22cc2ce6a4e6b17524dba96b2962f776bce1446028ff3c56",
+  "src/eval/sheep_stats.py": "496c99c4feefcb3511caec1423259d431d324b3dffe3932ccd9c8f544b20ae85",
+  "src/eval/stats.py": "c422950d5bf04521c11cc9a7f7894f6e73bf993310ee9330175b20af4d8fd803",
+  "src/eval/dairy.py": "67c8fc0e74f6d7ca0549a0bdb135adbbe3f18a07c674648f44da8eae937b822a",
+  "src/eval/dairy_qc.py": "1111572dff73da38ca19992a40605e9fffe1bab8999981e7ca20cd0fd1be07cc",
+  "src/eval/coldstart.py": "4ce856c181883a2ccd031190bb1216bbb56cf24dffb3c7c274cfbed7adae5754",
+  "src/eval/session_order.py": "c13d8fa1699b11d62b7d1730ef6eb27b28f6ffdfb95c20abf24e6624c6bac470",
+  "src/eval/falsify.py": "a65d3751bf42688c491985fde379214ea655f7f575c349f4a677119b911f7561",
+  "src/cusum/cusum.py": "d9f038d16c5bd8cac746afee01b0140f8da2648e0b7b519d672adade2fa07f9e",
+  "src/audit/leakage.py": "647ac50a1e4428506663d259c39c2d3df8dc8d338530d96398a3a91f314f2691",
+  "src/eval/lodo.py": "e6738b52e032da68313dcf7030c0eeae06f268a1abcf556ae0784a9fd91de11b",
+  "src/eval/build_report.py": "5d3e1243e899a3bd49776bd7d0c4024afb7035a5e9ab25b19ebaad9cd1d1729e"
+ },
+ "input_hashes": {
+  "requirements.txt": "3425f057d0f54cce31f04761e519c6c6a9a229fb889d2f1c5df7e05e6b28cc83",
+  "configs/phase0.yaml": "0bd4746c05252d33844c27ea58f03d3f635c0af4b6b86a1989a882ec28413e82",
+  "runs/features_cache/manifest_rgb.parquet": "540fcf3380be9d13792b21e732f0fd7c3b0fa436b96b7b7bdebe503cf6131ce5",
+  "runs/features_cache/manifest_thermal.parquet": "9a771d32321098c88451eb530d751fc9c411a82ac66f599d45aa2efb989d3af4",
+  "runs/features_cache/manifest_recow.parquet": "e30c1699057ea9a52386ca207cf9b2ddb80b606dc60b8038330b14605d2c4015",
+  "runs/features_cache/dairy_emb.npz": "e2d507e3f90fbd0a65e85e0e95ad51dac27dbb36d68f4861282c00a27f0bbe37"
+ },
+ "runtime": {
+  "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.26300-SP0"
+ },
  "splits": {
   "cattle_rgb": {
    "train": [
@@ -12,15 +46,17 @@
     "17"
    ],
    "test": [
-    "64"
+    "64",
+    "2"
    ]
   },
   "sheep": "mirror train_raw(898)/test(74)/test_raw(225)"
  },
  "models": {
-  "mil": "matched cells in pain_fair.json (shared split, BCE-only); legacy val-selected -> sheep_mil_best.pth",
+  "mil": "matched cells in pain_fair.json; legacy val-selected runs are under legacy_results",
   "landmarks": "krcnn R50-FPN R2: jitter(416,512,576) lr2e-5 x6ep (box-score top-1)"
  },
+ "primary_protocol": "Results are synthetic-shift, identity, proxy-label, or quality-shift evaluations as documented per artifact; no real cattle pain/change label is present in this public-data run.",
  "landmark_ap": {
   "val": {
    "mean_success": 0.04623655913978495,
@@ -108,7 +144,15 @@
     "1059": 1.0
    },
    "mean_per_cow": 0.9171,
-   "mean_pop": 0.8247
+   "mean_pop": 0.8247,
+   "paired_gap_mean": 0.0924,
+   "paired_gap_cluster_ci95": [
+    -0.0,
+    0.2284
+   ],
+   "paired_t_p": 0.2355,
+   "wilcoxon_p": 0.5,
+   "n_cows": 5
   },
   "shift_3.0": {
    "per_cow": {
@@ -126,79 +170,15 @@
     "1059": 1.0
    },
    "mean_per_cow": 0.9605,
-   "mean_pop": 0.8918
-  }
- },
- "pain_sheep_g5": {
-  "B0_test": {
-   "recall": 0.973,
-   "f1": 0.809,
-   "auroc": 0.8846,
-   "ci": [
-    0.7974,
-    0.9552
+   "mean_pop": 0.8918,
+   "paired_gap_mean": 0.0687,
+   "paired_gap_cluster_ci95": [
+    0.0,
+    0.1518
    ],
-   "n": 74
-  },
-  "MIL_test": {
-   "recall": 1.0,
-   "f1": 0.7255,
-   "auroc": 0.8729,
-   "ci": [
-    0.7909,
-    0.9487
-   ],
-   "n": 74
-  },
-  "B0_test_raw": {
-   "recall": 0.931,
-   "f1": 0.383,
-   "auroc": 0.8735,
-   "ci": [
-    0.7925,
-    0.9375
-   ],
-   "n": 225
-  },
-  "MIL_test_raw": {
-   "recall": 0.9655,
-   "f1": 0.2814,
-   "auroc": 0.7708,
-   "ci": [
-    0.6797,
-    0.8497
-   ],
-   "n": 225
-  }
- },
- "pain_mil_v2": {
-  "selected": "V3-focal",
-  "val": {
-   "V0-baseline": 0.8138,
-   "V1-imgstd": 0.7441,
-   "V2-imgstd+focal": 0.7517,
-   "V3-focal": 0.8654,
-   "V4-imgstd+focal+D256": 0.7107
-  },
-  "MIL_test": {
-   "recall": 0.8919,
-   "f1": 0.9041,
-   "auroc": 0.9591,
-   "ci": [
-    0.9064,
-    0.997
-   ],
-   "n": 74
-  },
-  "MIL_test_raw": {
-   "recall": 0.6897,
-   "f1": 0.5714,
-   "auroc": 0.8981,
-   "ci": [
-    0.8266,
-    0.9527
-   ],
-   "n": 225
+   "paired_t_p": 0.19,
+   "wilcoxon_p": 0.5,
+   "n_cows": 5
   }
  },
  "pain_fair": {
@@ -330,11 +310,84 @@
   "n": 6838,
   "probe_n": 3459,
   "chance": 0.0062,
+  "majority_accuracy": 0.0318,
+  "uniform_chance": 0.0062,
   "between": 0.417,
   "LDA_raw": 0.7187,
   "LDA_per-cow-z": 0.0318,
   "5NN_raw": 0.6707,
   "5NN_per-cow-z": 0.4146,
+  "probe_metrics": {
+   "LDA_raw": {
+    "accuracy": 0.7187,
+    "balanced_accuracy": 0.6979,
+    "macro_f1": 0.6794,
+    "majority_accuracy": 0.0318,
+    "uniform_chance": 0.0062,
+    "balanced_constant_baseline": 0.0063,
+    "n_classes": 160,
+    "n_train_classes": 161,
+    "n": 3459,
+    "macro_average_over": "probe-present classes",
+    "majority_accuracy_definition": "largest probe class fraction (descriptive)",
+    "train_majority_class": "23",
+    "train_majority_accuracy": 0.0318,
+    "train_majority_balanced_accuracy": 0.0063
+   },
+   "LDA_per-cow-z": {
+    "accuracy": 0.0318,
+    "balanced_accuracy": 0.0063,
+    "macro_f1": 0.0004,
+    "majority_accuracy": 0.0318,
+    "uniform_chance": 0.0062,
+    "balanced_constant_baseline": 0.0063,
+    "n_classes": 160,
+    "n_train_classes": 161,
+    "n": 3459,
+    "macro_average_over": "probe-present classes",
+    "majority_accuracy_definition": "largest probe class fraction (descriptive)",
+    "train_majority_class": "23",
+    "train_majority_accuracy": 0.0318,
+    "train_majority_balanced_accuracy": 0.0063
+   },
+   "5NN_raw": {
+    "accuracy": 0.6707,
+    "balanced_accuracy": 0.5493,
+    "macro_f1": 0.5615,
+    "majority_accuracy": 0.0318,
+    "uniform_chance": 0.0062,
+    "balanced_constant_baseline": 0.0063,
+    "n_classes": 160,
+    "n_train_classes": 161,
+    "n": 3459,
+    "macro_average_over": "probe-present classes",
+    "majority_accuracy_definition": "largest probe class fraction (descriptive)",
+    "train_majority_class": "23",
+    "train_majority_accuracy": 0.0318,
+    "train_majority_balanced_accuracy": 0.0063
+   },
+   "5NN_per-cow-z": {
+    "accuracy": 0.4146,
+    "balanced_accuracy": 0.2401,
+    "macro_f1": 0.2638,
+    "majority_accuracy": 0.0318,
+    "uniform_chance": 0.0062,
+    "balanced_constant_baseline": 0.0063,
+    "n_classes": 160,
+    "n_train_classes": 161,
+    "n": 3459,
+    "macro_average_over": "probe-present classes",
+    "majority_accuracy_definition": "largest probe class fraction (descriptive)",
+    "train_majority_class": "23",
+    "train_majority_accuracy": 0.0318,
+    "train_majority_balanced_accuracy": 0.0063
+   }
+  },
+  "identity_conditioned_controls": [
+   "LDA_per-cow-z",
+   "5NN_per-cow-z"
+  ],
+  "identity_conditioned_warning": "per-cow-z uses the true cow label to select reference statistics; it is not an identity-blind deployment feature",
   "loio": {
    "shift_1.5": {
     "mean_per_cow": 0.8478,
@@ -351,17 +404,87 @@
    "cross_sess": 0.7628,
    "diff_cow": 1.0123
   },
-  "protocol": "ref/probe split per cow; PCA+stats on ref; probes trained ref scored probe"
+  "protocol": "ref/probe split per cow; PCA+stats on ref; probes trained ref scored probe; balanced accuracy and majority baseline reported for identity"
  },
  "session_order": {
   "eligible_cows": 84,
   "ref_n": 3091,
   "probe_n": 1688,
   "chance": 0.0119,
+  "probe_metrics": {
+   "LDA_raw": {
+    "accuracy": 0.1291,
+    "balanced_accuracy": 0.1416,
+    "macro_f1": 0.1174,
+    "majority_accuracy": 0.0545,
+    "uniform_chance": 0.0119,
+    "balanced_constant_baseline": 0.0119,
+    "n_classes": 84,
+    "n_train_classes": 84,
+    "n": 1688,
+    "macro_average_over": "probe-present classes",
+    "majority_accuracy_definition": "largest probe class fraction (descriptive)",
+    "train_majority_class": "92",
+    "train_majority_accuracy": 0.0077,
+    "train_majority_balanced_accuracy": 0.0119
+   },
+   "LDA_per-cow-z": {
+    "accuracy": 0.0077,
+    "balanced_accuracy": 0.0119,
+    "macro_f1": 0.0002,
+    "majority_accuracy": 0.0545,
+    "uniform_chance": 0.0119,
+    "balanced_constant_baseline": 0.0119,
+    "n_classes": 84,
+    "n_train_classes": 84,
+    "n": 1688,
+    "macro_average_over": "probe-present classes",
+    "majority_accuracy_definition": "largest probe class fraction (descriptive)",
+    "train_majority_class": "92",
+    "train_majority_accuracy": 0.0077,
+    "train_majority_balanced_accuracy": 0.0119
+   },
+   "5NN_raw": {
+    "accuracy": 0.1357,
+    "balanced_accuracy": 0.1253,
+    "macro_f1": 0.1111,
+    "majority_accuracy": 0.0545,
+    "uniform_chance": 0.0119,
+    "balanced_constant_baseline": 0.0119,
+    "n_classes": 84,
+    "n_train_classes": 84,
+    "n": 1688,
+    "macro_average_over": "probe-present classes",
+    "majority_accuracy_definition": "largest probe class fraction (descriptive)",
+    "train_majority_class": "92",
+    "train_majority_accuracy": 0.0077,
+    "train_majority_balanced_accuracy": 0.0119
+   },
+   "5NN_per-cow-z": {
+    "accuracy": 0.0936,
+    "balanced_accuracy": 0.0568,
+    "macro_f1": 0.048,
+    "majority_accuracy": 0.0545,
+    "uniform_chance": 0.0119,
+    "balanced_constant_baseline": 0.0119,
+    "n_classes": 84,
+    "n_train_classes": 84,
+    "n": 1688,
+    "macro_average_over": "probe-present classes",
+    "majority_accuracy_definition": "largest probe class fraction (descriptive)",
+    "train_majority_class": "92",
+    "train_majority_accuracy": 0.0077,
+    "train_majority_balanced_accuracy": 0.0119
+   }
+  },
   "LDA_raw": 0.1291,
   "LDA_per-cow-z": 0.0077,
   "5NN_raw": 0.1357,
-  "5NN_per-cow-z": 0.0936
+  "5NN_per-cow-z": 0.0936,
+  "majority_accuracy": 0.0545,
+  "uniform_chance": 0.0119,
+  "identity_conditioned_warning": "per-cow-z uses the true cow label to select reference statistics; it is an identity-conditioned control, not an identity-blind deployment feature",
+  "protocol": "largest session as reference, remaining sessions as probe; all fitting on reference; balanced accuracy and majority baseline reported"
  },
  "coldstart": {
   "n_ref": {
@@ -409,59 +532,175 @@
  },
  "cusum": {
   "taus": {
-   "0.01": 68.04356148405681,
-   "0.02": 68.04356148405681,
-   "0.05": 25.05428477144936
+   "0.01": 422.12294370221207,
+   "0.02": 422.12294370221207,
+   "0.05": 422.12294370221207
   },
   "constraint_met": {
-   "0.01": false,
+   "0.01": true,
    "0.02": true,
    "0.05": true
+  },
+  "calibration": {
+   "0.01": {
+    "stream_far": 0.0,
+    "frame_alarm_rate": 0.0,
+    "alarms": 0,
+    "streams": 5,
+    "frames": 567,
+    "target_stream_far": 0.01,
+    "max_cusum": [
+     211.8815,
+     422.1229,
+     258.244,
+     8.3845,
+     23.875
+    ],
+    "resolution": "1/5 stream(s)",
+    "target_below_one_stream_resolution": true
+   },
+   "0.02": {
+    "stream_far": 0.0,
+    "frame_alarm_rate": 0.0,
+    "alarms": 0,
+    "streams": 5,
+    "frames": 567,
+    "target_stream_far": 0.02,
+    "max_cusum": [
+     211.8815,
+     422.1229,
+     258.244,
+     8.3845,
+     23.875
+    ],
+    "resolution": "1/5 stream(s)",
+    "target_below_one_stream_resolution": true
+   },
+   "0.05": {
+    "stream_far": 0.0,
+    "frame_alarm_rate": 0.0,
+    "alarms": 0,
+    "streams": 5,
+    "frames": 567,
+    "target_stream_far": 0.05,
+    "max_cusum": [
+     211.8815,
+     422.1229,
+     258.244,
+     8.3845,
+     23.875
+    ],
+    "resolution": "1/5 stream(s)",
+    "target_below_one_stream_resolution": true
+   }
   },
   "delays": {
    "shift_1.5": {
     "0.01": {
-     "delay": 22.8,
-     "miss": 0,
+     "delay": 43.5,
+     "delay_detected_only": true,
+     "miss": 3,
+     "miss_upper95": 0.9236,
+     "detected": 2,
      "n": 5,
-     "achieved_far": 0.0439
+     "pre_event_alarms": 0,
+     "healthy_eval_far": {
+      "stream_far": 0.2,
+      "frame_alarm_rate": 0.0141,
+      "alarms": 8,
+      "streams": 5,
+      "frames": 569
+     }
     },
     "0.02": {
-     "delay": 22.8,
-     "miss": 0,
+     "delay": 43.5,
+     "delay_detected_only": true,
+     "miss": 3,
+     "miss_upper95": 0.9236,
+     "detected": 2,
      "n": 5,
-     "achieved_far": 0.0439
+     "pre_event_alarms": 0,
+     "healthy_eval_far": {
+      "stream_far": 0.2,
+      "frame_alarm_rate": 0.0141,
+      "alarms": 8,
+      "streams": 5,
+      "frames": 569
+     }
     },
     "0.05": {
-     "delay": 8.0,
-     "miss": 0,
+     "delay": 43.5,
+     "delay_detected_only": true,
+     "miss": 3,
+     "miss_upper95": 0.9236,
+     "detected": 2,
      "n": 5,
-     "achieved_far": 0.0738
+     "pre_event_alarms": 0,
+     "healthy_eval_far": {
+      "stream_far": 0.2,
+      "frame_alarm_rate": 0.0141,
+      "alarms": 8,
+      "streams": 5,
+      "frames": 569
+     }
     }
    },
    "shift_3.0": {
     "0.01": {
-     "delay": 13.2,
-     "miss": 0,
+     "delay": 21.0,
+     "delay_detected_only": true,
+     "miss": 3,
+     "miss_upper95": 0.9236,
+     "detected": 2,
      "n": 5,
-     "achieved_far": 0.0439
+     "pre_event_alarms": 0,
+     "healthy_eval_far": {
+      "stream_far": 0.2,
+      "frame_alarm_rate": 0.0141,
+      "alarms": 8,
+      "streams": 5,
+      "frames": 569
+     }
     },
     "0.02": {
-     "delay": 13.2,
-     "miss": 0,
+     "delay": 21.0,
+     "delay_detected_only": true,
+     "miss": 3,
+     "miss_upper95": 0.9236,
+     "detected": 2,
      "n": 5,
-     "achieved_far": 0.0439
+     "pre_event_alarms": 0,
+     "healthy_eval_far": {
+      "stream_far": 0.2,
+      "frame_alarm_rate": 0.0141,
+      "alarms": 8,
+      "streams": 5,
+      "frames": 569
+     }
     },
     "0.05": {
-     "delay": 3.4,
-     "miss": 0,
+     "delay": 21.0,
+     "delay_detected_only": true,
+     "miss": 3,
+     "miss_upper95": 0.9236,
+     "detected": 2,
      "n": 5,
-     "achieved_far": 0.0738
+     "pre_event_alarms": 0,
+     "healthy_eval_far": {
+      "stream_far": 0.2,
+      "frame_alarm_rate": 0.0141,
+      "alarms": 8,
+      "streams": 5,
+      "frames": 569
+     }
     }
    }
   },
   "k": 0.5,
-  "protocol": "ref-only scaler; fit 40% / calibrate 30% / eval 30% chronological per cow; misses censored"
+  "protocol": "reference 40% / calibration 30% / evaluation 30% chronological per cow; threshold candidates are calibration max-CUSUM values; healthy evaluation FAR reported separately; misses include exact one-sided 95% upper bound",
+  "injection": "persistent shift in three randomly selected standardized feature coordinates at one-third of the evaluation window, then rescored through the fitted Ledoit-Wolf model; not a real event",
+  "n_events": 5,
+  "interpretation": "descriptive synthetic-shift stress test; no real pain/change labels"
  },
  "identity_audit": {
   "acc": {
@@ -474,11 +713,156 @@
    "5NN_per-cow-z ROI-12D": 0.7233,
    "5NN_z-deviation scalar": 0.5143
   },
-  "chance": 0.2,
+  "metrics": {
+   "LDA_raw ROI-12D": {
+    "accuracy": 0.5903,
+    "balanced_accuracy": 0.5144,
+    "macro_f1": 0.45,
+    "majority_accuracy": 0.2904,
+    "uniform_chance": 0.2,
+    "balanced_constant_baseline": 0.2,
+    "n_classes": 5,
+    "n_train_classes": 5,
+    "n": 947,
+    "macro_average_over": "probe-present classes",
+    "majority_accuracy_definition": "largest probe class fraction (descriptive)",
+    "train_majority_class": "1087",
+    "train_majority_accuracy": 0.2904,
+    "train_majority_balanced_accuracy": 0.2
+   },
+   "LDA_procrustes 26D": {
+    "accuracy": 0.9578,
+    "balanced_accuracy": 0.9668,
+    "macro_f1": 0.9566,
+    "majority_accuracy": 0.2904,
+    "uniform_chance": 0.2,
+    "balanced_constant_baseline": 0.2,
+    "n_classes": 5,
+    "n_train_classes": 5,
+    "n": 947,
+    "macro_average_over": "probe-present classes",
+    "majority_accuracy_definition": "largest probe class fraction (descriptive)",
+    "train_majority_class": "1087",
+    "train_majority_accuracy": 0.2904,
+    "train_majority_balanced_accuracy": 0.2
+   },
+   "LDA_per-cow-z ROI-12D": {
+    "accuracy": 0.2904,
+    "balanced_accuracy": 0.2,
+    "macro_f1": 0.09,
+    "majority_accuracy": 0.2904,
+    "uniform_chance": 0.2,
+    "balanced_constant_baseline": 0.2,
+    "n_classes": 5,
+    "n_train_classes": 5,
+    "n": 947,
+    "macro_average_over": "probe-present classes",
+    "majority_accuracy_definition": "largest probe class fraction (descriptive)",
+    "train_majority_class": "1087",
+    "train_majority_accuracy": 0.2904,
+    "train_majority_balanced_accuracy": 0.2
+   },
+   "LDA_z-deviation scalar": {
+    "accuracy": 0.2904,
+    "balanced_accuracy": 0.2,
+    "macro_f1": 0.09,
+    "majority_accuracy": 0.2904,
+    "uniform_chance": 0.2,
+    "balanced_constant_baseline": 0.2,
+    "n_classes": 5,
+    "n_train_classes": 5,
+    "n": 947,
+    "macro_average_over": "probe-present classes",
+    "majority_accuracy_definition": "largest probe class fraction (descriptive)",
+    "train_majority_class": "1087",
+    "train_majority_accuracy": 0.2904,
+    "train_majority_balanced_accuracy": 0.2
+   },
+   "5NN_raw ROI-12D": {
+    "accuracy": 0.9673,
+    "balanced_accuracy": 0.9675,
+    "macro_f1": 0.9661,
+    "majority_accuracy": 0.2904,
+    "uniform_chance": 0.2,
+    "balanced_constant_baseline": 0.2,
+    "n_classes": 5,
+    "n_train_classes": 5,
+    "n": 947,
+    "macro_average_over": "probe-present classes",
+    "majority_accuracy_definition": "largest probe class fraction (descriptive)",
+    "train_majority_class": "1087",
+    "train_majority_accuracy": 0.2904,
+    "train_majority_balanced_accuracy": 0.2
+   },
+   "5NN_procrustes 26D": {
+    "accuracy": 0.9979,
+    "balanced_accuracy": 0.9985,
+    "macro_f1": 0.9971,
+    "majority_accuracy": 0.2904,
+    "uniform_chance": 0.2,
+    "balanced_constant_baseline": 0.2,
+    "n_classes": 5,
+    "n_train_classes": 5,
+    "n": 947,
+    "macro_average_over": "probe-present classes",
+    "majority_accuracy_definition": "largest probe class fraction (descriptive)",
+    "train_majority_class": "1087",
+    "train_majority_accuracy": 0.2904,
+    "train_majority_balanced_accuracy": 0.2
+   },
+   "5NN_per-cow-z ROI-12D": {
+    "accuracy": 0.7233,
+    "balanced_accuracy": 0.7022,
+    "macro_f1": 0.6957,
+    "majority_accuracy": 0.2904,
+    "uniform_chance": 0.2,
+    "balanced_constant_baseline": 0.2,
+    "n_classes": 5,
+    "n_train_classes": 5,
+    "n": 947,
+    "macro_average_over": "probe-present classes",
+    "majority_accuracy_definition": "largest probe class fraction (descriptive)",
+    "train_majority_class": "1087",
+    "train_majority_accuracy": 0.2904,
+    "train_majority_balanced_accuracy": 0.2
+   },
+   "5NN_z-deviation scalar": {
+    "accuracy": 0.5143,
+    "balanced_accuracy": 0.4973,
+    "macro_f1": 0.4819,
+    "majority_accuracy": 0.2904,
+    "uniform_chance": 0.2,
+    "balanced_constant_baseline": 0.2,
+    "n_classes": 5,
+    "n_train_classes": 5,
+    "n": 947,
+    "macro_average_over": "probe-present classes",
+    "majority_accuracy_definition": "largest probe class fraction (descriptive)",
+    "train_majority_class": "1087",
+    "train_majority_accuracy": 0.2904,
+    "train_majority_balanced_accuracy": 0.2
+   }
+  },
+  "majority_accuracy": 0.2904,
+  "uniform_chance": 0.2,
+  "class_counts": {
+   "1036": 225,
+   "1059": 88,
+   "1063": 93,
+   "1087": 275,
+   "1090": 266
+  },
   "n_cows": 5,
   "ref_n": 943,
   "probe_n": 947,
-  "protocol": "per-cow ref/probe split; stats on ref; train ref score probe"
+  "protocol": "per-cow ref/probe split; template/stats/classifiers fit on ref; probe scored once; balanced accuracy is primary",
+  "identity_conditioned_controls": [
+   "per-cow-z ROI-12D",
+   "z-deviation scalar"
+  ],
+  "identity_conditioned_warning": "per-cow-z and z-deviation use the true cow label to select reference statistics; they are controls, not identity-blind deployment features",
+  "session_probe": "not available: manifest_rgb has no session label",
+  "limitations": "random within-sequence split; adjacent frames and cow/session confounding remain; no cow-clustered probe confidence intervals"
  },
  "ablation": {
   "protocol": "matched: shared split, BCE-only, 3 seeds; primary=test_raw",
@@ -546,42 +930,267 @@
   },
   "worst_group_blur": {
    "B0": {
-    "worst": 0.7961,
+    "worst": 0.8081,
     "groups": [
-     1.0,
-     0.9338,
-     0.7961,
-     0.8252
+     {
+      "group": 0,
+      "n": 61,
+      "positives": 2,
+      "auroc": 1.0,
+      "ci_cluster": [
+       1.0,
+       1.0
+      ]
+     },
+     {
+      "group": 1,
+      "n": 45,
+      "positives": 9,
+      "auroc": 0.9198,
+      "ci_cluster": [
+       0.8233,
+       0.9889
+      ]
+     },
+     {
+      "group": 2,
+      "n": 72,
+      "positives": 6,
+      "auroc": 0.8081,
+      "ci_cluster": [
+       0.6264,
+       0.9517
+      ]
+     },
+     {
+      "group": 3,
+      "n": 47,
+      "positives": 12,
+      "auroc": 0.8167,
+      "ci_cluster": [
+       0.6375,
+       0.9561
+      ]
+     }
     ]
    },
    "B1": {
-    "worst": 0.7725,
+    "worst": 0.75,
     "groups": [
-     0.9722,
-     0.9149,
-     0.7725,
-     0.8497
+     {
+      "group": 0,
+      "n": 61,
+      "positives": 2,
+      "auroc": 0.9746,
+      "ci_cluster": [
+       0.931,
+       1.0
+      ]
+     },
+     {
+      "group": 1,
+      "n": 45,
+      "positives": 9,
+      "auroc": 0.8981,
+      "ci_cluster": [
+       0.7905,
+       0.9775
+      ]
+     },
+     {
+      "group": 2,
+      "n": 72,
+      "positives": 6,
+      "auroc": 0.75,
+      "ci_cluster": [
+       0.5284,
+       0.9642
+      ]
+     },
+     {
+      "group": 3,
+      "n": 47,
+      "positives": 12,
+      "auroc": 0.8548,
+      "ci_cluster": [
+       0.735,
+       0.9665
+      ]
+     }
     ]
    },
    "B2-MIL": {
-    "worst": 0.7765,
+    "worst": 0.7854,
     "groups": [
-     0.9722,
-     0.9243,
-     0.7765,
-     0.8671
+     {
+      "group": 0,
+      "n": 61,
+      "positives": 2,
+      "auroc": 0.9746,
+      "ci_cluster": [
+       0.931,
+       1.0
+      ]
+     },
+     {
+      "group": 1,
+      "n": 45,
+      "positives": 9,
+      "auroc": 0.9074,
+      "ci_cluster": [
+       0.7972,
+       0.984
+      ]
+     },
+     {
+      "group": 2,
+      "n": 72,
+      "positives": 6,
+      "auroc": 0.7854,
+      "ci_cluster": [
+       0.5708,
+       0.9614
+      ]
+     },
+     {
+      "group": 3,
+      "n": 47,
+      "positives": 12,
+      "auroc": 0.8524,
+      "ci_cluster": [
+       0.7357,
+       0.9524
+      ]
+     }
     ]
    },
    "B3-fusion": {
-    "worst": 0.7765,
+    "worst": 0.7778,
     "groups": [
-     0.9722,
-     0.922,
-     0.7765,
-     0.8776
+     {
+      "group": 0,
+      "n": 61,
+      "positives": 2,
+      "auroc": 0.9746,
+      "ci_cluster": [
+       0.931,
+       1.0
+      ]
+     },
+     {
+      "group": 1,
+      "n": 45,
+      "positives": 9,
+      "auroc": 0.9043,
+      "ci_cluster": [
+       0.795,
+       0.9797
+      ]
+     },
+     {
+      "group": 2,
+      "n": 72,
+      "positives": 6,
+      "auroc": 0.7778,
+      "ci_cluster": [
+       0.5363,
+       0.965
+      ]
+     },
+     {
+      "group": 3,
+      "n": 47,
+      "positives": 12,
+      "auroc": 0.8667,
+      "ci_cluster": [
+       0.7543,
+       0.9627
+      ]
+     }
     ]
    }
   },
-  "note": "LODO across species blocked: equine gated, cattle unlabeled. Blur-quartile shift used as quality-shift proxy. B4 deferred: no identity labels on pain data."
+  "quality_group_cuts_train_raw": [
+   2.661608,
+   3.902667,
+   12.215633
+  ],
+  "quality_group_protocol": "quartile cut-points fit on train_raw; groups evaluated on test_raw; source-file clustered bootstrap CIs",
+  "lodo_status": "blocked: no compatible equine/cattle pain domain labels",
+  "note": "Blur stratification is a quality-shift proxy, not species LODO. B4 is deferred because pain data have no identity labels."
+ },
+ "legacy_results": {
+  "pain_sheep_g5": {
+   "B0_test": {
+    "recall": 0.973,
+    "f1": 0.809,
+    "auroc": 0.8846,
+    "ci": [
+     0.7974,
+     0.9552
+    ],
+    "n": 74
+   },
+   "MIL_test": {
+    "recall": 1.0,
+    "f1": 0.7255,
+    "auroc": 0.8729,
+    "ci": [
+     0.7909,
+     0.9487
+    ],
+    "n": 74
+   },
+   "B0_test_raw": {
+    "recall": 0.931,
+    "f1": 0.383,
+    "auroc": 0.8735,
+    "ci": [
+     0.7925,
+     0.9375
+    ],
+    "n": 225
+   },
+   "MIL_test_raw": {
+    "recall": 0.9655,
+    "f1": 0.2814,
+    "auroc": 0.7708,
+    "ci": [
+     0.6797,
+     0.8497
+    ],
+    "n": 225
+   }
+  },
+  "pain_mil_v2": {
+   "selected": "V3-focal",
+   "val": {
+    "V0-baseline": 0.8138,
+    "V1-imgstd": 0.7441,
+    "V2-imgstd+focal": 0.7517,
+    "V3-focal": 0.8654,
+    "V4-imgstd+focal+D256": 0.7107
+   },
+   "MIL_test": {
+    "recall": 0.8919,
+    "f1": 0.9041,
+    "auroc": 0.9591,
+    "ci": [
+     0.9064,
+     0.997
+    ],
+    "n": 74
+   },
+   "MIL_test_raw": {
+    "recall": 0.6897,
+    "f1": 0.5714,
+    "auroc": 0.8981,
+    "ci": [
+     0.8266,
+     0.9527
+    ],
+    "n": 225
+   }
+  }
  }
 }

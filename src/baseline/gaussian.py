@@ -4,6 +4,7 @@ Eval: LOIO injected-deviation AUROC, per-cow vs population."""
 import os
 import numpy as np
 import pandas as pd
+from scipy import stats as sstats
 from sklearn.covariance import LedoitWolf
 from sklearn.metrics import roc_auc_score
 
@@ -85,9 +86,23 @@ def main():
             aucs_pc.append(a_pc)
             aucs_pop.append(a_pop)
             per[c], pop[c] = round(float(a_pc), 4), round(float(a_pop), 4)
+        gap = np.array(aucs_pc) - np.array(aucs_pop)
+        t_res = sstats.ttest_rel(aucs_pc, aucs_pop)
+        try:
+            w_res = sstats.wilcoxon(aucs_pc, aucs_pop)
+            w_p = round(float(w_res.pvalue), 4)
+        except ValueError:
+            w_p = None
+        rng_b = np.random.RandomState(SEED)
+        boots = [float(np.mean(rng_b.choice(gap, len(gap), replace=True))) for _ in range(2000)]
         res[f'shift_{shift}'] = {'per_cow': per, 'pop': pop,
                                  'mean_per_cow': round(float(np.mean(aucs_pc)), 4),
-                                 'mean_pop': round(float(np.mean(aucs_pop)), 4)}
+                                 'mean_pop': round(float(np.mean(aucs_pop)), 4),
+                                 'paired_gap_mean': round(float(gap.mean()), 4),
+                                 'paired_gap_cluster_ci95': [round(float(np.percentile(boots, 2.5)), 4),
+                                                             round(float(np.percentile(boots, 97.5)), 4)],
+                                 'paired_t_p': round(float(t_res.pvalue), 4),
+                                 'wilcoxon_p': w_p, 'n_cows': len(cows)}
         print(f"shift={shift}", res[f'shift_{shift}']['mean_per_cow'], res[f'shift_{shift}']['mean_pop'])
     import json
     json.dump(res, open(os.path.join(CACHE, 'baseline_loio.json'), 'w'), indent=1)

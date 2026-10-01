@@ -5,8 +5,11 @@ import pandas as pd
 
 CACHE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                      'runs', 'features_cache')
+HAS_CACHE = all(os.path.exists(os.path.join(CACHE, name)) for name in (
+    'manifest_rgb.parquet', 'manifest_thermal.parquet', 'manifest_recow.parquet'))
 
 
+@unittest.skipUnless(HAS_CACHE, 'cached manifests are not present; run the data preparation phase')
 class TestManifest(unittest.TestCase):
     def test_counts(self):
         rgb = pd.read_parquet(os.path.join(CACHE, 'manifest_rgb.parquet'))

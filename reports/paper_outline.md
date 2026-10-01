@@ -1,55 +1,69 @@
-# PB-FIRL paper outline (every claim -> reports/eval_report.json; single-claim framing, 2026-09-26)
+# PB-FIRL paper outline (public-data audit scope)
 
-## Title
-An Animal's Own Reference History Improves Detection of Facial Change Beyond Population Models
+## Proposed title
+**Per-animal reference baselines for controlled facial-change detection: an adversarial
+public-data audit**
 
-## Central claim
-An animal's own reference history improves detection of meaningful change on later, unseen
-observations, beyond what population models and simple normalization can explain. Everything
-below tests that claim or its boundaries. Landmarks, MIL, CUSUM are tools, not accomplishments.
+## Central claim supported by the current repository
+The repository implements and audits a per-animal Gaussian reference pipeline. On public
+cattle/dairy data, it can compare detectors under **synthetic feature perturbations** and can
+measure identity/session/quality confounds. It does **not** yet establish detection of
+biologically meaningful change, welfare state, disease, or cattle pain.
 
 ## 1. Introduction
-Population averages confound identity with state (Dhaliwal et al. 2025: near-perfect accuracy
-from identity shortcut). Hypothesis: per-animal reference comparison detects change that
-population models miss. Honest scope: mechanism validated on proxies + assumed-reference
-frames; NOT a validated cattle pain detector.
+Population models can confuse stable identity and acquisition/session variation with state.
+A per-animal reference may reduce that nuisance variation, but a convincing test requires
+chronological or cross-session probes, strong population baselines, uncertainty, and real
+longitudinal labels. The public-data study therefore treats the synthetic-shift results as a
+stress test and makes the missing real-change experiment explicit.
 
 ## 2. Related work
-Zhang et al. 2025; Feighelstein et al. 2026 (post-hoc z-score vs learned per-animal MVN);
-Dhaliwal et al. 2025 (identity shortcut); Martvel et al. 2024 (geometry-first);
-Neethirajan et al. 2026 (transfer fails).
+Use the cited identity-shortcut, animal-geometry, per-animal normalization, and animal-pain
+literature from the final bibliography. Do not describe the sheep expression proxy as a pain
+label or the ReCowGnition identity data as a pain dataset.
 
 ## 3. Method
-Reference/probe discipline throughout: stats fit on reference only; probes trained on reference,
-scored on probe; chronological streams; source-grouped splits. Falsification controls share
-splits, features, perturbations, budgets.
+- CattleFace-RGBT: ROI geometry from annotated keypoints; folder-to-cow mapping is an
+  unverified assumption and downstream geometry results use GT keypoints.
+- ReCowGnition: frozen ResNet embeddings for identity/session and synthetic-shift stress tests;
+  no pain labels.
+- Sheep mirror: frozen embeddings and matched pooling/attention proxy classifiers; primary
+  test is `test_raw`, because the balanced test has source overlap.
+- Reference/probe discipline: fit scalers, PCA, covariance, and classifiers on the reference
+  partition only wherever the protocol says so.
+- Statistical unit: cow for cattle/dairy experiments and source filename for the sheep proxy;
+  cluster-bootstrap intervals are reported where the artifact provides them.
+- CUSUM: chronological 40/30/30 split, threshold candidates from the running statistic,
+  feature-level synthetic injection followed by model rescoring, and held-out healthy FAR.
 
-## 4. Results (all from eval_report.json)
-- Core (`falsify`, 32 dairy cows, frozen dims/budgets): population 0.829 = calibrated
-  population 0.829 < own-mean 0.849 ~= full own-model 0.849 < shrinkage 0.868; matched
-  wrong-animal reference 0.747. Benefit is animal-specific (not more data); mechanism is
-  centering (covariance adds nothing at n_ref=20); shrinkage best. Simple calibration does
-  NOT explain the operational gain.
-- Budget (`coldstart`, 30 cows): per-cow crosses population at ~10-20 reference frames
-  (0.785/0.812/0.848 at 10/20/40 vs pop 0.802).
-- Beef geometry (`variance`, `baseline_loio`, n=5, folder assumption): same direction
-  (0.917 vs 0.825) but not significant (paired t p=0.24) — supporting, not standalone.
-- Identity boundary (`identity_audit`, `dairy`, `session_order`): linear readout suppressed
-  (beef LDA 0.29, dairy 0.03, cross-session 0.008) but nonlinear leakage persists
-  (5NN 0.72 / 0.41 / 0.09). Nuisance dependence reduced, not removed.
-- Pain proxy (`pain_fair`, matched, test_raw dhash-clean): pool 0.883 ~= attn 0.875;
-  AUPRC 0.558 (base 0.129). Pooling is NOT the driver; kept as default.
-- Landmarks (`landmark_ap`): held-out success@0.50 0.24 — weak; geometry results are
-  oracle (GT keypoints), inference penalty unmeasured.
-- Early warning (`cusum`, chronological, ref-only scaler): FAR-0.01 constraint NOT met
-  (saturated); achieved FAR overshoots targets (0.044 vs 0.01); delays 22.8/8.0 (shift 1.5),
-  13.2/3.4 (shift 3.0), zero misses. Frame units (filenames, not timestamps).
+## 4. Results to report
+- `falsify`: population/own-mean/own-covariance/shrinkage/wrong-animal comparisons under a
+  frozen synthetic direction and matched reference budget. State explicitly that these are
+  controlled perturbation results, not real-change detection.
+- `coldstart` and `dairy`: reference-budget and cross-session identity/session boundaries;
+  avoid claiming a universal 10–20-frame deployment crossing.
+- `identity_audit` and `session_order`: raw accuracy must be accompanied by balanced accuracy,
+  macro-F1, majority accuracy, and uniform chance. Per-cow-z results use the true cow identity
+  and are identity-conditioned controls, not identity-blind deployment features.
+- `pain_fair`/`ablation`: pooling and attention are compared on the source-disjoint sheep
+  proxy test; report seed spread and source-clustered uncertainty. Do not call it cattle pain.
+- `landmark_ap`: held-out cattle landmark results are weak and downstream GT-keypoint geometry
+  does not measure predicted-keypoint deployment.
+- `cusum`: report thresholds, calibration stream resolution, held-out healthy FAR, event count,
+  miss count, exact upper bound, and detected-only delays. Do not write “zero misses.”
 
-## 5. Limitations
-Folder=sequence assumption; n=5 beef; proxy labels + contaminated balanced test (primary:
-test_raw); synthetic injections; nonlinear leakage open; front-end not in inference path;
-no equine; no validated pain detector. Interface stub for video phase.
+## 5. Limitations and non-claims
+The main blockers are: no real change labels; random/same-session frame protocols in parts of
+the battery; unverified folder mapping; synthetic constant offsets; missing strong hierarchical
+baselines; small beef sample; residual identity/session structure; weak landmark transfer; and
+no compatible equine/cattle species-LODO domain. The paper must not claim a validated cattle
+pain detector, biologically meaningful change, causal welfare inference, or generalization from
+sheep proxies to cattle.
 
-## 6. Next
-Requested cattle-pain videos become a HELD-OUT test with predeclared protocol (frozen dims,
-budgets, controls). Sequence MIL, B4, demo CLI, GT-vs-predicted inference path.
+## 6. Required held-out experiment
+Before accessing the authors’ data, freeze the analysis code and protocol:
+reference window, calibration window, chronological probe window, event definition, animal and
+session IDs, threshold rule, control animals, metrics, cluster unit, and missing-data policy.
+The held-out set must include unchanged controls and real labeled events. The primary analysis
+should compare own-reference, population, pooled-within-animal, and hierarchical/shrinkage
+baselines on cross-session or chronological probes, with cow-clustered intervals.

@@ -7,6 +7,7 @@ import pandas as pd
 from sklearn.decomposition import PCA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.neighbors import KNeighborsClassifier
+from src.eval.stats import classification_summary
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 CACHE = os.path.join(ROOT, 'runs', 'features_cache')
@@ -42,14 +43,28 @@ def main():
     Zr = np.stack([(r - rmean[c]) / rstd[c] for r, c in zip(Pr, yr)])
     Zp = np.stack([(r - rmean[c]) / rstd[c] for r, c in zip(Pp, yp)])
     res = {'eligible_cows': elig, 'ref_n': len(ref_idx), 'probe_n': len(yp),
-           'chance': round(1 / len(np.unique(yr)), 4)}
+           'chance': round(1 / len(np.unique(yr)), 4), 'probe_metrics': {}}
     for pname, clf in [('LDA', LinearDiscriminantAnalysis()),
                        ('5NN', KNeighborsClassifier(5))]:
         for rname, Xtr, Xte in [('raw', Pr, Pp), ('per-cow-z', Zr, Zp)]:
             clf.fit(Xtr, yr)
-            a = float(clf.score(Xte, yp))
-            res[f'{pname}_{rname}'] = round(a, 4)
-            print(f'{pname} {rname}: {a:.4f}')
+            pred = clf.predict(Xte)
+            m = classification_summary(yp, pred, yr)
+            key = f'{pname}_{rname}'
+            res[key] = m['accuracy']
+            res['probe_metrics'][key] = m
+            print(f"{pname} {rname}: accuracy={m['accuracy']:.4f}, "
+                  f"balanced={m['balanced_accuracy']:.4f}, "
+                  f"majority={m['majority_accuracy']:.4f}, "
+                  f"chance={m['uniform_chance']:.4f}")
+    first = next(iter(res['probe_metrics'].values()))
+    res['majority_accuracy'] = first['majority_accuracy']
+    res['uniform_chance'] = first['uniform_chance']
+    res['identity_conditioned_warning'] = (
+        'per-cow-z uses the true cow label to select reference statistics; it is an '
+        'identity-conditioned control, not an identity-blind deployment feature')
+    res['protocol'] = ('largest session as reference, remaining sessions as probe; all '
+                       'fitting on reference; balanced accuracy and majority baseline reported')
     import json
     json.dump(res, open(os.path.join(CACHE, 'session_order.json'), 'w'), indent=1)
 

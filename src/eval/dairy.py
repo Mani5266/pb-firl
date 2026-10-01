@@ -10,6 +10,7 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.covariance import LedoitWolf
 from sklearn.metrics import roc_auc_score
+from src.eval.stats import classification_summary
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -74,12 +75,19 @@ def main():
     Zp = np.stack([(r - ref_mean[c]) / ref_std[c] for r, c in zip(Pp, yp)])
     probes = {'LDA': LinearDiscriminantAnalysis(), '5NN': KNeighborsClassifier(5)}
     acc = {}
+    probe_metrics = {}
     for pname, clf in probes.items():
         for rname, Xtr, Xte in [('raw', Pr, Pp), ('per-cow-z', Zr, Zp)]:
             clf.fit(Xtr, yr)
-            a = float(clf.score(Xte, yp))
-            acc[f'{pname}_{rname}'] = round(a, 4)
-            print(f'{pname} {rname}: {a:.4f}')
+            pred = clf.predict(Xte)
+            m = classification_summary(yp, pred, yr)
+            key = f'{pname}_{rname}'
+            acc[key] = m['accuracy']
+            probe_metrics[key] = m
+            print(f"{pname} {rname}: accuracy={m['accuracy']:.4f}, "
+                  f"balanced={m['balanced_accuracy']:.4f}, "
+                  f"majority={m['majority_accuracy']:.4f}, "
+                  f"chance={m['uniform_chance']:.4f}")
     # LOIO injected-shift with per-cow PCA-on-rest (cows with >=10 imgs)
     big = [c for c in cows if (y == c).sum() >= 10]
     print('loio cows:', len(big))
@@ -127,20 +135,33 @@ def main():
         b = rng.randint(len(yp))
         if yp[a] != yp[b]:
             d_diff.append(float(1 - Pn[a] @ Pn[b]))
+    first_metrics = next(iter(probe_metrics.values()))
     res = {'n_cows': len(cows), 'n': len(df), 'probe_n': len(yp), 'chance': round(1/len(cows), 4),
+           'majority_accuracy': first_metrics['majority_accuracy'],
+           'uniform_chance': first_metrics['uniform_chance'],
            'between': round(between, 4), **acc,
+           'probe_metrics': probe_metrics,
+           'identity_conditioned_controls': ['LDA_per-cow-z', '5NN_per-cow-z'],
+           'identity_conditioned_warning': ('per-cow-z uses the true cow label to select '
+                                             'reference statistics; it is not an identity-blind '
+                                             'deployment feature'),
            'loio': res_loio, 'loio_cows': len(big),
            'dist': {'same_sess': round(float(np.mean(d_same)), 4),
                     'cross_sess': round(float(np.mean(d_cross)), 4),
                     'diff_cow': round(float(np.mean(d_diff)), 4)},
-           'protocol': 'ref/probe split per cow; PCA+stats on ref; probes trained ref scored probe'}
+           'protocol': ('ref/probe split per cow; PCA+stats on ref; probes trained ref scored '
+                        'probe; balanced accuracy and majority baseline reported for identity')}
     print(res['dist'])
     plt.figure(figsize=(10, 4))
     plt.subplot(1, 2, 1)
-    plt.bar(list(acc), list(acc.values()))
-    plt.axhline(1/len(cows), color='red', ls='--')
+    plt.bar(list(probe_metrics), [m['balanced_accuracy'] for m in probe_metrics.values()])
+    plt.axhline(first_metrics['balanced_constant_baseline'], color='darkorange', ls='--',
+                label='constant-class balanced baseline')
+    plt.axhline(first_metrics['uniform_chance'], color='red', ls=':',
+                label=f'uniform chance ({first_metrics["uniform_chance"]:.2f})')
     plt.xticks(rotation=15)
-    plt.title(f'Dairy cow-ID probes (161 cows, chance={1/len(cows):.3f})')
+    plt.title(f'Dairy cow-ID probes (161 cows, balanced accuracy)')
+    plt.legend(fontsize=8)
     plt.subplot(1, 2, 2)
     plt.bar(['same\nsession', 'cross\nsession', 'different\ncow'],
             [res['dist']['same_sess'], res['dist']['cross_sess'], res['dist']['diff_cow']])

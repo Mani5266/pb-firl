@@ -10,28 +10,38 @@
    diagnoses. Balanced `test` CONTAMINATED (60/74 dhashes overlap train_raw): all `test` numbers
    are direction-only; primary eval is test_raw (1 shared dhash) + clean-source subset
    (185 rows / 8 pos: noisy, sensitivity only; 40 source files shared with train as other crops).
-5. UU Equine: no direct download; request-only. Species-level LODO blocked; blur-quartile
-   quality shift used as proxy (matched worst-group B0 0.844).
+5. UU Equine: no direct download; request-only. Species-level LODO is blocked; the
+   executable robustness analysis is a train-defined blur-group proxy on test_raw. The
+   current matched run reports worst-group B0 0.8081, B1 0.7500, B2-MIL 0.7854, and
+   B3-fusion 0.7778, with source-file clustered intervals in `ablation.json`.
 6. Landmark detector weak on held-out cow (val success@0.50 0.242, corrected area; n=1 cow).
    Earlier 0.66 AP50 was an x2*y2 area bug (fixed). Metric renamed: mean OKS success rate,
    not COCO AP. Downstream geometry uses GT keypoints.
 7. Cattle frames are UNLABELLED assumed reference (not confirmed healthy); baseline validated on
    injected deviations, not real pain. Beef n=5 gap not significant (paired t p=0.24) — beef is
    supporting evidence for the dairy-scale finding, not standalone proof.
-8. Matched comparison (shared split, matched budgets, 3 seeds): mean pooling >= attention
-   (test_raw 0.897 vs 0.864 BCE); focal-loss gain was a protocol artifact. Earlier MIL-win
-   claim withdrawn. Sequence-level MIL + B4 deferred to video phase.
-9. Identity audit (leakage-safe: ref-fit stats, train-ref/score-probe): linear readout suppressed
-   (beef LDA 0.29, dairy LDA 0.03) but NONLINEAR leakage persists (5NN 0.72 beef / 0.41 dairy).
-   Claim is reduction, not removal. Procrustes rotation convention fixed (was transposed).
-10. CUSUM chronological, ref-only scaler: FAR-0.01 target NOT achievable (saturated at max
-    candidate); achieved FAR overshoots (0.044 vs 0.01 target); delays reported at achieved
-    rates with zero misses (censored separately). Trace plot resets on alarm, as scored.
-    "25->12 frames" was target-varying; state delays at achieved FAR. Frame units only.
+8. Matched comparison (shared split, matched budgets, 3 seeds): the cached fair comparison
+   gives pool+BCE 0.8825 and attn+BCE 0.8592 on test_raw; attn+focal is 0.8746. This is
+   underpowered for equivalence and must not be phrased as pooling being proven superior.
+   Sequence-level MIL + B4 are deferred to the video phase.
+9. Identity audit (leakage-safe: ref-fit stats, train-ref/score-probe): per-cow-z LDA accuracy
+   equals the majority-class accuracy (beef 0.2904, dairy 0.0318) and its balanced accuracy
+   equals the constant-class baseline (beef 0.20, dairy 0.0063). Nonlinear leakage persists
+   (5NN accuracy 0.72 beef / 0.41 dairy; balanced accuracy 0.70 / 0.24). These are
+   identity-conditioned controls, not identity-blind deployment features. Procrustes rotation
+   convention fixed (was transposed).
+10. CUSUM is chronological and uses a reference-only scaler/model. Thresholds are calibrated
+    from the running CUSUM statistic on five calibration streams (0.01/0.02/0.05 are below
+    the one-stream resolution); the held-out healthy stream FAR is reported separately because
+    temporal drift transfers poorly. The synthetic feature
+    injection run has 5 events, 3 misses at shifts 1.5/3.0, and a one-sided 95% miss-rate
+    upper bound of 0.9236. Delays are detected-only frame counts, not real-event performance.
 11. No validated cattle pain detector. BasePainVideoDataset is an interface stub: loader, frame
     sampling, temporal bags still to build when video data arrives.
-12. Cold-start curve (30 dairy cows): per-cow beats population from ~10-20 reference frames
-    (0.785/0.812/0.848 at 10/20/40 vs pop 0.802). Small-n, embedding-space, synthetic shifts.
-13. Falsification battery (32 cows): wrong-animal control 0.747 < own 0.849 (animal-specific,
-    not more-data); covariance adds nothing over centering at n_ref=20; shrinkage best (0.868).
-    Perturbation dims frozen across shifts here (older dairy LOIO varied them - superseded).
+12. Cold-start curve (30 dairy cows): the apparent crossing around 10–20 reference frames
+    is a small-n embedding-space synthetic-shift result without a confidence band; it is not
+    a deployment sample-complexity guarantee.
+13. Falsification battery (32 cows): wrong-animal and shrinkage comparisons are useful stress
+    tests but remain within-session, direction-dependent, and synthetic. Calibration-only
+    per-cow AUROC is algebraically monotone and therefore cannot support an operational
+    threshold claim. Strong pooled-within-animal and hierarchical baselines remain future work.

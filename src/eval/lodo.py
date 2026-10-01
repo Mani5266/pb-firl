@@ -1,7 +1,9 @@
-"""Phase 7: robust eval with MATCHED models (review fix). B0 (pool+BCE), B1 ([pooled,MD]+BCE),
-B2 (attn+BCE) trained on the shared stratified split with matched budgets, 3 train seeds;
-B3 = late-fusion (B1+B2)/2. Primary: test_raw (dhash-disjoint). Worst-group over blur quartiles.
-B4 deferred (no identity labels on pain data)."""
+"""Matched sheep proxy evaluation and quality-shift sensitivity.
+
+This is not species LODO: no equine/cattle pain domain with compatible labels is
+available.  The only executable robustness analysis is a test-set quality
+stratification whose cut-points are fit on train_raw, never on test_raw.
+"""
 import os
 import numpy as np
 import pandas as pd
@@ -17,6 +19,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspa
 from src.pain.train_sheep import MLP, AttMIL, metrics, boot_auroc, GRID, FILES, SHEEP
 from src.pain.improve_mil import grouped_strat_split
 from src.pain.fair_compare import MeanPool, fit_cell
+from src.eval.stats import cluster_bootstrap_auc
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 CACHE = os.path.join(ROOT, 'runs', 'features_cache')
@@ -87,21 +90,39 @@ def main():
     plt.tight_layout()
     plt.savefig(os.path.join(FIG, 'roc_per_domain.png'), dpi=100)
     df = pd.read_parquet(os.path.join(SHEEP, FILES['test_raw']))
-    grp = np.digitize(df.blur_score.astype(float).values,
-                      np.quantile(df.blur_score.astype(float).values, [0.25, 0.5, 0.75]))
+    # Test cut-points are not allowed to define the groups being evaluated.
+    train_blur = df_tr.blur_score.astype(float).values
+    cuts = np.quantile(train_blur, [0.25, 0.5, 0.75])
+    grp = np.digitize(df.blur_score.astype(float).values, cuts)
     wg = {}
     for name, sm in mean_scores.items():
-        aucs = []
+        groups = []
         for g in range(4):
             m = grp == g
+            entry = {'group': g, 'n': int(m.sum()), 'positives': int(yt[m].sum())}
             if m.sum() > 5 and len(np.unique(yt[m])) == 2:
                 from sklearn.metrics import roc_auc_score
-                aucs.append(roc_auc_score(yt[m], sm[m]))
-        wg[name] = {'worst': round(float(min(aucs)), 4), 'groups': [round(float(a), 4) for a in aucs]}
-    print('worst-group:', wg)
+                entry['auroc'] = round(float(roc_auc_score(yt[m], sm[m])), 4)
+                entry['ci_cluster'] = cluster_bootstrap_auc(
+                    yt[m], sm[m], df.source_filename.values[m], n_resamples=1000)
+            else:
+                entry['auroc'] = None
+                entry['ci_cluster'] = [None, None]
+            groups.append(entry)
+        valid = [g['auroc'] for g in groups if g['auroc'] is not None]
+        wg[name] = {
+            'worst': round(float(min(valid)), 4) if valid else None,
+            'groups': groups,
+        }
+    print('worst-group:', {k: v['worst'] for k, v in wg.items()})
     res['worst_group_blur'] = wg
-    res['note'] = ('LODO across species blocked: equine gated, cattle unlabeled. '
-                   'Blur-quartile shift used as quality-shift proxy. B4 deferred: no identity labels on pain data.')
+    res['quality_group_cuts_train_raw'] = [round(float(x), 6) for x in cuts]
+    res['quality_group_protocol'] = (
+        'quartile cut-points fit on train_raw; groups evaluated on test_raw; '
+        'source-file clustered bootstrap CIs')
+    res['lodo_status'] = 'blocked: no compatible equine/cattle pain domain labels'
+    res['note'] = ('Blur stratification is a quality-shift proxy, not species LODO. '
+                   'B4 is deferred because pain data have no identity labels.')
     torch.save(b0.state_dict(), os.path.join(CKPT, 'sheep_b0_matched.pth'))
     import json
     json.dump(res, open(os.path.join(CACHE, 'ablation.json'), 'w'), indent=1)
