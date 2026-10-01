@@ -19,14 +19,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-cuda121 = [
-    "torch==2.1.0+cu121 --index-url https://download.pytorch.org/whl/cu121",
-    "torchvision==0.16.0+cu121 --index-url https://download.pytorch.org/whl/cu121",
-]
-cpu = [
-    "torch==2.1.0+cpu --index-url https://download.pytorch.org/whl/cpu",
-    "torchvision==0.16.0+cpu --index-url https://download.pytorch.org/whl/cpu",
-]
+# NOTE: torch wheels are platform/index-specific and cannot be expressed in
+# PEP 508 strings. Install torch FIRST via INSTALL.md (CUDA or CPU), then:
+#   pip install -e .   (or pip install -e ".[test]")
+test = []
 
 [tool.setuptools.packages.find]
 where = ["."]

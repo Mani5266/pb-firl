@@ -1,3 +1,25 @@
+Metadata-Version: 2.4
+Name: pb-firl
+Version: 0.1.0
+Summary: Per-animal reference baselines for controlled facial-change detection (research prototype)
+License: MIT
+Requires-Python: <3.12,>=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+License-File: LICENSE-DATA.md
+Requires-Dist: numpy==1.26.4
+Requires-Dist: pandas==2.1.4
+Requires-Dist: pyarrow==17.0.0
+Requires-Dist: scikit-learn==1.3.2
+Requires-Dist: scipy==1.17.1
+Requires-Dist: matplotlib==3.10.9
+Requires-Dist: pillow==12.2.0
+Requires-Dist: PyYAML==6.0.3
+Requires-Dist: huggingface-hub==0.26.2
+Requires-Dist: datasets==3.0.2
+Provides-Extra: test
+Dynamic: license-file
+
 # PB-FIRL — Per-animal reference baselines for controlled change detection
 
 B.Tech final-year major project. The public-data implementation is now scoped as a
@@ -32,10 +54,6 @@ found contaminated (60/74 dhash overlap) — primary eval is the dhash-clean `te
 identity metrics now include balanced accuracy/majority baselines; CUSUM calibration uses the
 running statistic and feature-level injection; report generation hashes inputs and fails on
 missing primary artifacts. See `reports/limitations.md`.
-
-Evidence base: 5 beef cattle (1 chute session each) · 161 dairy cows (5 farm sessions) ·
-1123 sheep images (217 source files, no animal IDs) · 1–2 farms total. Intervals are
-animal/source-level where computed; frame counts measure scale, never independence.
 
 ## Architecture
 

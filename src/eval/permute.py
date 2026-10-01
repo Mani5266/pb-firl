@@ -42,7 +42,7 @@ def main():
                 continue
             ix = np.where(y == c)[0]
             if len(ix) < NREF + NEVL or c not in eval_cows:
-                pass
+                continue
             take = ix[:NREF + NEVL] if len(ix) >= NREF + NEVL else ix
             if len(take) < NREF + 5:
                 continue
