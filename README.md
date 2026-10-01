@@ -96,8 +96,10 @@ python -m unittest discover -s tests       # 25 math/protocol/count/integrity ch
   artifacts are required by the report builder, source/data hashes are recorded, and 25 tests
   cover geometry, CUSUM protocol helpers, cluster bootstrap, split integrity, and imbalance baselines.
 - **Controlled synthetic benchmark**: the falsification battery compares population, own-mean,
-  own-covariance, shrinkage, and wrong-animal references. These results are not real-change
-  evidence and should be reported with cow-level uncertainty before publication.
+  own-covariance, shrinkage (lambda sweep), pooled-within-cov, and wrong-animal references with
+  per-cow CIs. Significant: pooled-within (+0.029), shrinkage over own (+0.019), wrong-animal gap
+  (+0.102). NOT significant: raw own-vs-pop (+0.020). Direction sweep: 59% favor own.
+  Cross-session: session-matched population wins at small reference budgets.
 - **Dairy scale and session boundary**: ReCowGnition supports identity/scale validation and
   cross-session ordering, not pain labels. Per-cow-z probes use the true identity and are
   explicitly treated as identity-conditioned controls.

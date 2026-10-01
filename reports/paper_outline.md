@@ -37,9 +37,14 @@ label or the ReCowGnition identity data as a pain dataset.
   feature-level synthetic injection followed by model rescoring, and held-out healthy FAR.
 
 ## 4. Results to report
-- `falsify`: population/own-mean/own-covariance/shrinkage/wrong-animal comparisons under a
-  frozen synthetic direction and matched reference budget. State explicitly that these are
-  controlled perturbation results, not real-change detection.
+- `falsify`: population/own-mean/own-covariance/shrinkage/wrong-animal/pooled-within
+  comparisons under a frozen synthetic direction and matched reference budget, with per-cow
+  values and cow-clustered gap CIs. Report: own-vs-pop n.s. (+0.020 [-0.008, 0.049]);
+  pooled-within significant (+0.029); shrinkage flat across lambda; wrong-animal gap
+  significant (+0.102). Direction sweep: 59% of 100 directions favor own (mean +0.010).
+  Controlled perturbation results, not real-change detection.
+- `xsession`: cross-session ref-A/probe-B detection. n_ref=20: gap n.s.; n_ref=10:
+  session-matched population wins significantly. Do not claim cross-session advantage.
 - `coldstart` and `dairy`: reference-budget and cross-session identity/session boundaries;
   avoid claiming a universal 10–20-frame deployment crossing.
 - `identity_audit` and `session_order`: raw accuracy must be accompanied by balanced accuracy,

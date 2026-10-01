@@ -41,7 +41,13 @@
 12. Cold-start curve (30 dairy cows): the apparent crossing around 10–20 reference frames
     is a small-n embedding-space synthetic-shift result without a confidence band; it is not
     a deployment sample-complexity guarantee.
-13. Falsification battery (32 cows): wrong-animal and shrinkage comparisons are useful stress
-    tests but remain within-session, direction-dependent, and synthetic. Calibration-only
-    per-cow AUROC is algebraically monotone and therefore cannot support an operational
-    threshold claim. Strong pooled-within-animal and hierarchical baselines remain future work.
+13. Falsification battery (32 cows, per-cow CIs): own-vs-pop gap +0.020 CI [-0.008, 0.049]
+    (NOT significant); pooled-within-cov gap +0.029 CI [0.006, 0.052]; shrinkage lambda flat
+    (0.25: 0.868, 0.5: 0.868, 0.75: 0.861); wrong-animal gap +0.102 CI [0.064, 0.141].
+    Direction sweep (100 dirs): own beats pop in 59% of directions, mean gap +0.010.
+    Within-session, synthetic, single-magnitude. Calibration-only AUROC is algebraically
+    monotone and cannot support an operational threshold claim.
+14. Cross-session detection (ref session A, probe B): at n_ref=20 (12 cows) own 0.798 vs
+    session-matched pop 0.739, gap CI crosses zero; at n_ref=10 (31-39 cows) session-matched
+    pop WINS significantly (gap -0.06..-0.09). Personalization advantage not established
+    across sessions; small-ref regime favors same-session population fit.
