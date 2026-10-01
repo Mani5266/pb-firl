@@ -29,28 +29,31 @@ class PerCowBaseline:
         self.mu_g, self.sd_g = X.mean(0), X.std(0) + 1e-9
         Z = (X - self.mu_g) / self.sd_g
         self.pop = LedoitWolf().fit(Z)
+        dpop = np.sqrt(((Z - self.pop.location_) @ self.pop.precision_ *
+                        (Z - self.pop.location_)).sum(1))
+        self.pop_d_mu, self.pop_d_sd = dpop.mean(), dpop.std() + 1e-9
         for c in df.cow.unique():
             Zc = Z[df.cow.values == c]
             lw = LedoitWolf().fit(Zc)
-            dtr = np.sqrt(((Zc - lw.location_) @ np.linalg.inv(lw.covariance_) * (Zc - lw.location_)).sum(1))
+            dtr = np.sqrt(((Zc - lw.location_) @ lw.precision_ * (Zc - lw.location_)).sum(1))
             self.cows[c] = {'lw': lw, 'd_mu': dtr.mean(), 'd_sd': dtr.std() + 1e-9, 'n': len(Zc)}
         return self
 
     def _md(self, lw, Z):
         D = Z - lw.location_
-        return np.sqrt((D @ np.linalg.inv(lw.covariance_) * D).sum(1))
+        return np.sqrt((D @ lw.precision_ * D).sum(1))
 
     def deviation(self, X, cows):
-        """z-scored Mahalanobis distance; unknown cow -> population + low-confidence flag."""
+        """z-scored Mahalanobis distance on one shared scale; unknown cow ->
+        population-calibrated score + low-confidence flag + explicit interval."""
         Z = (X - self.mu_g) / self.sd_g
         out, conf = np.zeros(len(X)), np.ones(len(X))
         for i, (z, c) in enumerate(zip(Z, cows)):
             if c in self.cows:
                 e = self.cows[c]
                 out[i] = (self._md(e['lw'], z[None])[0] - e['d_mu']) / e['d_sd']
-            else:  # cold-start fallback
-                d = self._md(self.pop, z[None])[0]
-                out[i] = d  # uncalibrated raw distance
+            else:  # cold-start: population z-score (same scale), flag + wider interval
+                out[i] = (self._md(self.pop, z[None])[0] - self.pop_d_mu) / self.pop_d_sd
                 conf[i] = 0
         return out, conf
 
@@ -77,7 +80,7 @@ def main():
             Xinj = X[evl_i].copy()
             Xinj[:, INJECT_DIMS] += shift * sd_g[INJECT_DIMS]
             Zinj = (Xinj - mu_g) / sd_g
-            md = lambda lw, ZZ: np.sqrt(((ZZ - lw.location_) @ np.linalg.inv(lw.covariance_) * (ZZ - lw.location_)).sum(1))
+            md = lambda lw, ZZ: np.sqrt(((ZZ - lw.location_) @ lw.precision_ * (ZZ - lw.location_)).sum(1))
             d_self, d_inj = md(lw_self, Zevl), md(lw_self, Zinj)
             z_mu, z_sd = d_self.mean(), d_self.std() + 1e-9
             y = np.r_[np.zeros(len(Zevl)), np.ones(len(Zinj))]

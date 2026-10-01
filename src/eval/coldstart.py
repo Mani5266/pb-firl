@@ -39,7 +39,7 @@ def main():
         sd_g = R0.std(0) + 1e-9
         Z0, Ze = (R0 - mu_g) / sd_g, (Re - mu_g) / sd_g
         lw_p = LedoitWolf().fit(Z0)
-        md = lambda lw, ZZ: np.sqrt(((ZZ - lw.location_) @ np.linalg.inv(lw.covariance_) * (ZZ - lw.location_)).sum(1))
+        md = lambda lw, ZZ: np.sqrt(((ZZ - lw.location_) @ lw.precision_ * (ZZ - lw.location_)).sum(1))
         dim = rng.choice(64, 8, replace=False)
         Zi = Ze.copy()
         Zi[:, dim] += SHIFT

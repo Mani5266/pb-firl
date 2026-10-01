@@ -78,6 +78,24 @@ FEAT_NAMES = ['inter_eye', 'ear_len_L', 'ear_len_R', 'ear_bend_L', 'ear_bend_R',
               'muzzle_mouth', 'eye_muzzle_L', 'eye_muzzle_R', 'eye_nostril_sum']
 
 
+def lw_precision(lw):
+    """Stable precision from a fitted LedoitWolf (sklearn inverts internally)."""
+    return np.asarray(lw.precision_, float)
+
+
+def cond_num_cov(lw):
+    """Condition number of a fitted covariance (diagnostic for small-n fits)."""
+    return float(np.linalg.cond(np.asarray(lw.covariance_, float)))
+
+
+def mahalanobis_cov(loc, cov, Z):
+    """Mahalanobis distance with Cholesky solve (no explicit inverse)."""
+    from scipy import linalg as _sl
+    D = np.asarray(Z, float) - np.asarray(loc, float)
+    S = _sl.cho_solve(_sl.cho_factor(np.asarray(cov, float)), D.T).T
+    return np.sqrt((S * D).sum(1))
+
+
 def oks(pred, gt, vis, area, sigma=0.10):
     """Object Keypoint Similarity, single instance. sigma uniform (documented)."""
     d2 = ((pred - gt) ** 2).sum(-1)

@@ -107,7 +107,7 @@ def main():
             sd_g = R0.std(0) + 1e-9
             Zf, Ze = (Cf - mu_g)/sd_g, (Ce - mu_g)/sd_g
             lw_s, lw_p = LedoitWolf().fit(Zf), LedoitWolf().fit((R0-mu_g)/sd_g)
-            md = lambda lw, ZZ: np.sqrt(((ZZ-lw.location_) @ np.linalg.inv(lw.covariance_) * (ZZ-lw.location_)).sum(1))
+            md = lambda lw, ZZ: np.sqrt(((ZZ-lw.location_) @ lw.precision_ * (ZZ-lw.location_)).sum(1))
             Zi = Ze.copy()
             Zi[:, dim] += shift
             d, di = md(lw_s, Ze), md(lw_s, Zi)

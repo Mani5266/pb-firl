@@ -1,29 +1,30 @@
 {
  "seed": 42,
- "config_hash": "a1c2657fd98bea10",
+ "config_hash": "ce2d073e749a58a7",
  "source_hashes": {
-  "src/front_end/geometry.py": "08d0acdfe4f0afe3864b3683ca6b9c28f8cf3eebb5349f5f065c906c58229722",
+  "src/front_end/geometry.py": "6908a20c5872abeae50a4eb80e8e34e82c5f7dfe87b9bf8a6391d59f5cc582e9",
   "src/front_end/ingest.py": "d35ebe7b26038b87bbd8ecec8588c21d6cee9b6f1341a16370449382743d629c",
   "src/front_end/train_landmarks.py": "1be23994e8f3bd6fdb596a990fbdf92e386315cd4c74e87d7179a950ce178de8",
   "src/front_end/eval_landmarks.py": "67068d059e61ca9822946ad429038843eae2709d0c4b5602a487c9e9ac335791",
   "src/eval/variance_decomp.py": "f02eff3baf3e75979ded6c7b60a2afab2e4b0c205ebc31612f73cdea4c60aaa7",
-  "src/baseline/gaussian.py": "f618f18b4b903206eb4ef0003803471f519fab36c2ba5e15e0df77c22dfa7efc",
-  "src/pain/train_sheep.py": "ebbb0983f90f03cb7ab1b563a732ce2c438de70417a4d43927ad08235334a8ca",
-  "src/pain/improve_mil.py": "02adb9a8093e467fb29c69ec34889805bba0fe7eea8098c424f4ec254f2d2cde",
+  "src/baseline/gaussian.py": "75687f5ccfcc6f76d3dd7db4647a5f99cc226d80233dd52b1a2c48c592fb3e52",
+  "src/pain/train_sheep.py": "9e7092d95fc8756fa4c02c00ad3a8d302b3b2b636d2fe3f32317ad9b11195576",
+  "src/pain/improve_mil.py": "aac2ee49b2dbd335616c66701dfd4364e65b245eb1b55f3d9cad94ae0c12d1ef",
   "src/pain/fair_compare.py": "d41b1d38bce521cd22cc2ce6a4e6b17524dba96b2962f776bce1446028ff3c56",
   "src/eval/sheep_stats.py": "496c99c4feefcb3511caec1423259d431d324b3dffe3932ccd9c8f544b20ae85",
   "src/eval/stats.py": "c422950d5bf04521c11cc9a7f7894f6e73bf993310ee9330175b20af4d8fd803",
-  "src/eval/dairy.py": "67c8fc0e74f6d7ca0549a0bdb135adbbe3f18a07c674648f44da8eae937b822a",
+  "src/eval/dairy.py": "32e3a30cdcadeb230c80effaa74ee47b1275603f26da74f68ead795c8fdfe3a5",
   "src/eval/dairy_qc.py": "1111572dff73da38ca19992a40605e9fffe1bab8999981e7ca20cd0fd1be07cc",
-  "src/eval/coldstart.py": "4ce856c181883a2ccd031190bb1216bbb56cf24dffb3c7c274cfbed7adae5754",
+  "src/eval/coldstart.py": "a4c82bb72510d4478debc5d034e21c58938c0b9c44f8da7e2628289aeafa3309",
   "src/eval/session_order.py": "c13d8fa1699b11d62b7d1730ef6eb27b28f6ffdfb95c20abf24e6624c6bac470",
-  "src/eval/falsify.py": "6781feca8a56798e0b64a98e3a460a06b6c4578a806324800b85f824e6440491",
-  "src/eval/xsession.py": "39b8f50d550d12e77b33afdb31bf18b1dcd6f6b56b4706a3f788caf1cc324121",
-  "src/eval/directions.py": "c82a8d0c6823ab8dfb295021f8d7f33a745ac39e567f18ca5cc37d405f198c2e",
-  "src/cusum/cusum.py": "d9f038d16c5bd8cac746afee01b0140f8da2648e0b7b519d672adade2fa07f9e",
-  "src/audit/leakage.py": "647ac50a1e4428506663d259c39c2d3df8dc8d338530d96398a3a91f314f2691",
-  "src/eval/lodo.py": "e6738b52e032da68313dcf7030c0eeae06f268a1abcf556ae0784a9fd91de11b",
-  "src/eval/build_report.py": "2efa48479a0ebfc7da799be6c477d1fd620be4854600362d097bcf29261b7eaa"
+  "src/eval/falsify.py": "7a53834bdec31997ad1ae830c9dbae7fc3be341b2f2286d9b4fda330d14dd279",
+  "src/eval/xsession.py": "7725ae91a1c2cd2a330f209d1f818c8300bf881a4b238d9547fde96c570b94be",
+  "src/eval/directions.py": "3aa830154c5d48a4b0607da0e74249ce11934cc3d43b60c5ca6eb5ff342606d3",
+  "src/eval/permute.py": "6d32691731e9dbfa559ef99d89a32911926d06899e774b82607b83a4055a26c5",
+  "src/cusum/cusum.py": "adc85fa1a225f035314d94befed2aa1825fb41f7149f1e6c4ddbdaee8f9fce7f",
+  "src/audit/leakage.py": "2dd92dc961f31e98c6ae01c079cc6c05fb82e6c6e3b31bf74b7ea2a5ea7bb630",
+  "src/eval/lodo.py": "90133c559d1c6fb76b758746770225fd4680a10a8ca82ce5e917df6b231f28d0",
+  "src/eval/build_report.py": "2b0c31be62093b1dbd71a335cbf3082b8db0c1628de5ac56818910028f55fc3f"
  },
  "input_hashes": {
   "requirements.txt": "3425f057d0f54cce31f04761e519c6c6a9a229fb889d2f1c5df7e05e6b28cc83",
@@ -1212,7 +1213,8 @@
   },
   "n_cows": 32,
   "nref": 20,
-  "protocol": "shared PCA pool; frozen dims; matched 20-frame budgets"
+  "max_cov_cond": 58.6,
+  "protocol": "shared PCA pool; frozen dims; matched 20-frame budgets; precision_ (no explicit inverse); cond logged"
  },
  "xsession": {
   "n_cows": 12,
@@ -1264,11 +1266,21 @@
   },
   "frac_dirs_D_beats_A": 0.5938
  },
+ "permute": {
+  "n_shuffles": 50,
+  "null_mean": -0.0391,
+  "null_ci95": [
+   -0.0498,
+   -0.0275
+  ],
+  "observed_gap": 0.0198,
+  "p_perm": 0.0
+ },
  "cusum": {
   "taus": {
-   "0.01": 422.12294370221207,
-   "0.02": 422.12294370221207,
-   "0.05": 422.12294370221207
+   "0.01": 422.1229437022124,
+   "0.02": 422.1229437022124,
+   "0.05": 422.1229437022124
   },
   "constraint_met": {
    "0.01": true,

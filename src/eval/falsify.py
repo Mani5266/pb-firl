@@ -11,6 +11,10 @@ from sklearn.decomposition import PCA
 from sklearn.covariance import LedoitWolf
 from sklearn.metrics import roc_auc_score
 
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+from src.front_end.geometry import mahalanobis_cov
+
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 CACHE = os.path.join(ROOT, 'runs', 'features_cache')
 SEED = 42
@@ -38,6 +42,8 @@ def main():
     print('eval cows:', len(eval_cows))
     dim = rng.choice(64, NDIM, replace=False)  # frozen across shifts AND cows
     res = {}
+    from src.front_end.geometry import cond_num_cov
+    max_cond = 0.0
     for shift in SHIFTS:
         keys = ['A_pop', 'B_popCal', 'C_meanOnly', 'D_full',
                 *[f'E_shrink_{l}' for l in LAMBDAS], 'F_wrong', 'G_withinCov']
@@ -55,7 +61,8 @@ def main():
             Zi[:, dim] += shift
             lab = np.r_[np.zeros(len(Ze)), np.ones(len(Zi))]
             lw_p = LedoitWolf().fit(Z0)
-            inv_p = np.linalg.inv(lw_p.covariance_)
+            inv_p = lw_p.precision_
+            max_cond = max(max_cond, cond_num_cov(lw_p))
             sA_h, sA_i = md(lw_p.location_, inv_p, Ze), md(lw_p.location_, inv_p, Zi)
             acc['A_pop'].append(roc_auc_score(lab, np.r_[sA_h, sA_i]))
             cal = sA_h  # healthy scores of THIS cow under population model
@@ -66,21 +73,22 @@ def main():
             acc['C_meanOnly'].append(roc_auc_score(
                 lab, np.r_[md(m_o, inv_p, Ze), md(m_o, inv_p, Zi)]))
             lw_s = LedoitWolf().fit(Zr)
-            inv_s = np.linalg.inv(lw_s.covariance_)
+            max_cond = max(max_cond, cond_num_cov(lw_s))
+            inv_s = lw_s.precision_
             d, di = md(lw_s.location_, inv_s, Ze), md(lw_s.location_, inv_s, Zi)
             acc['D_full'].append(roc_auc_score(
                 lab, np.r_[(d - d.mean()) / (d.std() + 1e-9), (di - d.mean()) / (d.std() + 1e-9)]))
             for l in LAMBDAS:
                 cov_e = l * lw_s.covariance_ + (1 - l) * lw_p.covariance_
-                inv_e = np.linalg.inv(cov_e)
                 acc[f'E_shrink_{l}'].append(roc_auc_score(
-                    lab, np.r_[md(m_o, inv_e, Ze), md(m_o, inv_e, Zi)]))
+                    lab, np.r_[mahalanobis_cov(m_o, cov_e, Ze),
+                               mahalanobis_cov(m_o, cov_e, Zi)]))
             w = rng.choice([o for o in eval_cows if o != c])
             ixw = np.where(y == w)[0].copy()
             rng.shuffle(ixw)
             Zw = (P[ixw[:NREF]] - mu_g) / sd_g
             lw_w = LedoitWolf().fit(Zw)
-            inv_w = np.linalg.inv(lw_w.covariance_)
+            inv_w = lw_w.precision_
             acc['F_wrong'].append(roc_auc_score(
                 lab, np.r_[md(lw_w.location_, inv_w, Ze), md(lw_w.location_, inv_w, Zi)]))
             # G: own mean + pooled within-cow covariance (strong baseline)
@@ -92,7 +100,7 @@ def main():
                 Zo = (P[ixo[:NREF]] - mu_g) / sd_g
                 centered.append(Zo - Zo.mean(0))
             lw_wc = LedoitWolf().fit(np.concatenate(centered))
-            inv_wc = np.linalg.inv(lw_wc.covariance_)
+            inv_wc = lw_wc.precision_
             acc['G_withinCov'].append(roc_auc_score(
                 lab, np.r_[md(m_o, inv_wc, Ze), md(m_o, inv_wc, Zi)]))
         means = {k: round(float(np.mean(v)), 4) for k, v in acc.items()}
@@ -111,7 +119,13 @@ def main():
         print(f'shift={shift}', means)
     import json
     json.dump({'controls': res, 'n_cows': len(eval_cows), 'nref': NREF,
-               'protocol': 'shared PCA pool; frozen dims; matched 20-frame budgets'},
+               'n_frames_eval_total': int(len(eval_cows) * (NREF + NEVL)),
+               'min_frames_per_cow': int(min(counts[c] for c in eval_cows)),
+               'effective_unit': 'cow (frames within a cow are correlated; do not treat '
+                                 'frames as independent observations)',
+               'max_cov_cond': round(max_cond, 1),
+               'protocol': 'shared PCA pool; frozen dims; matched 20-frame budgets; '
+                           'precision_ (no explicit inverse); cond logged'},
               open(os.path.join(CACHE, 'falsify.json'), 'w'), indent=1)
 
 

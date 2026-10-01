@@ -24,13 +24,13 @@ SRC = [
     'src/eval/stats.py', 'src/eval/dairy.py', 'src/eval/dairy_qc.py',
     'src/eval/coldstart.py', 'src/eval/session_order.py',
     'src/eval/falsify.py', 'src/eval/xsession.py', 'src/eval/directions.py',
-    'src/cusum/cusum.py', 'src/audit/leakage.py',
+    'src/eval/permute.py', 'src/cusum/cusum.py', 'src/audit/leakage.py',
     'src/eval/lodo.py', 'src/eval/build_report.py',
 ]
 PRIMARY_RESULTS = [
     'landmark_ap', 'variance', 'baseline_loio', 'pain_fair', 'sheep_stats',
-    'dairy', 'session_order', 'coldstart', 'falsify', 'xsession', 'directions', 'cusum',
-    'identity_audit', 'ablation',
+    'dairy', 'session_order', 'coldstart', 'falsify', 'xsession', 'directions', 'permute',
+    'cusum', 'identity_audit', 'ablation',
 ]
 LEGACY_RESULTS = ['pain_sheep_g5', 'pain_mil_v2']
 INPUTS = [

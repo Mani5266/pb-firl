@@ -82,7 +82,7 @@ def main():
     G = (R - mu_g) / sd_g
     for c in cows:
         m = y == c
-        inv = np.linalg.inv(lws[c].covariance_)
+        inv = lws[c].precision_
         d = np.sqrt(((G[m] - lws[c].location_) @ inv * (G[m] - lws[c].location_)).sum(1))
         cow_indices = np.where(m)[0]
         dref = d[np.isin(cow_indices, ref_idx)]

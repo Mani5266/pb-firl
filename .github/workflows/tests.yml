@@ -1,0 +1,18 @@
+name: tests
+
+on: [push, pull_request]
+
+jobs:
+  unittest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install CPU dependencies
+        run: |
+          pip install --index-url https://download.pytorch.org/whl/cpu torch==2.1.0+cpu torchvision==0.16.0+cpu
+          pip install -r requirements-ci.txt
+      - name: Run unit tests (no data needed for math/protocol tests)
+        run: python -m unittest discover -s tests -v

@@ -63,18 +63,18 @@ def main():
         if len(Ip) < 10 or len(Io) < 10:
             continue
         lw_o = LedoitWolf().fit(Zr)
-        inv_o = np.linalg.inv(lw_o.covariance_)
+        inv_o = lw_o.precision_
         lw_ps = LedoitWolf().fit(Z[Ip])
-        inv_ps = np.linalg.inv(lw_ps.covariance_)
+        inv_ps = lw_ps.precision_
         lw_po = LedoitWolf().fit(Z[Io])
-        inv_po = np.linalg.inv(lw_po.covariance_)
+        inv_po = lw_po.precision_
         w = rng.choice(others)
         # wrong cow's own largest-session frames (session-matched to ITS reference)
         sw = pd.Series(sess[np.where(y == w)[0]]).value_counts().idxmax()
         ixw = np.where((y == w) & (sess == sw))[0].copy()
         rng.shuffle(ixw)
         lw_w = LedoitWolf().fit(Z[ixw[:NREF]])
-        inv_w = np.linalg.inv(lw_w.covariance_)
+        inv_w = lw_w.precision_
         acc['own'].append(roc_auc_score(lab, np.r_[md(lw_o.location_, inv_o, Ze),
                                                    md(lw_o.location_, inv_o, Zi)]))
         acc['pop_same'].append(roc_auc_score(lab, np.r_[md(lw_ps.location_, inv_ps, Ze),

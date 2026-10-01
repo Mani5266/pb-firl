@@ -111,6 +111,10 @@ def main():
            'val': {k: v[0] for k, v in scored.items()}}
     with torch.no_grad():
         for split in ['test', 'test_raw']:
+            if split == 'test' and os.environ.get('PB_ALLOW_CONTAMINATED') != '1':
+                print('SKIP contaminated balanced test (60/74 dhash overlap with train); '
+                      'set PB_ALLOW_CONTAMINATED=1 to score it anyway')
+                continue
             d = np.load(os.path.join(CACHE, f'sheep_g{GRID}_{split}.npz'))
             Xt, yt = d['inst'], d['y']
             if 'imgstd' in best_name:

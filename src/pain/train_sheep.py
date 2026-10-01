@@ -1,5 +1,10 @@
-"""Phase 4: sheep pain module. Frozen ResNet-50 embeddings; B0 pooled-MLP (hard labels)
-vs attention-MIL over 3x3 patch instances. Patch-level weak supervision (no video bags exist)."""
+"""Phase 4: sheep EXPRESSION-PROXY module (NOT a cattle-pain model).
+
+Frozen ResNet-50 embeddings; B0 pooled-MLP (hard labels) vs attention-MIL over
+patch instances. Labels are facial-expression proxies, not clinical pain diagnoses.
+The balanced `test` split overlaps train (see data/README.md): it is reported for
+direction only and must NEVER be used for model selection. Primary eval: test_raw.
+"""
 import io
 import os
 import numpy as np
@@ -146,6 +151,10 @@ def main():
     torch.save(mil.state_dict(), os.path.join(CKPT, f'sheep_mil_g{GRID}.pth'))
     with torch.no_grad():
         for split in ['test', 'test_raw']:
+            if split == 'test' and os.environ.get('PB_ALLOW_CONTAMINATED') != '1':
+                print('SKIP contaminated balanced test (60/74 dhash overlap with train); '
+                      'set PB_ALLOW_CONTAMINATED=1 to score it anyway')
+                continue
             d = np.load(os.path.join(CACHE, f'sheep_g{GRID}_{split}.npz'))
             Xt, Xti, yt = torch.from_numpy(d['pooled']).float(), torch.from_numpy(d['inst']).float(), d['y']
             s0 = torch.sigmoid(b0(Xt)).numpy()
@@ -154,8 +163,9 @@ def main():
             res[f'B0_{split}'] = {**metrics(yt, s0), 'ci': boot_auroc(yt, s0), 'n': len(yt)}
             res[f'MIL_{split}'] = {**metrics(yt, sm), 'ci': boot_auroc(yt, sm), 'n': len(yt)}
             print(split, 'B0', res[f'B0_{split}'], 'MIL', res[f'MIL_{split}'])
-            if split == 'test':
-                df = pd.read_parquet(os.path.join(SHEEP, FILES['test']))
+            if split == 'test_raw':
+                # attention figure uses the primary (uncontaminated) eval split
+                df = pd.read_parquet(os.path.join(SHEEP, FILES['test_raw']))
                 pos = np.where(yt == 1)[0][:2]
                 fig, ax = plt.subplots(1, 2, figsize=(10, 4))
                 for a, j in zip(ax, pos):

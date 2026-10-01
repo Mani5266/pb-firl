@@ -8,6 +8,10 @@ from sklearn.decomposition import PCA
 from sklearn.covariance import LedoitWolf
 from sklearn.metrics import roc_auc_score
 
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+from src.front_end.geometry import mahalanobis_cov
+
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 CACHE = os.path.join(ROOT, 'runs', 'features_cache')
 SEED = 42
@@ -42,17 +46,16 @@ def main():
         Z0 = (P[others] - mu_g) / sd_g
         Zr, Ze = (P[ref] - mu_g) / sd_g, (P[evl] - mu_g) / sd_g
         lw_p = LedoitWolf().fit(Z0)
-        inv_p = np.linalg.inv(lw_p.covariance_)
+        inv_p = lw_p.precision_
         lw_s = LedoitWolf().fit(Zr)
-        inv_s = np.linalg.inv(lw_s.covariance_)
+        inv_s = lw_s.precision_
         m_o = Zr.mean(0)
         cov_e = 0.5 * lw_s.covariance_ + 0.5 * lw_p.covariance_
-        inv_e = np.linalg.inv(cov_e)
         w = rng.choice([o for o in eval_cows if o != c])
         ixw = np.where(y == w)[0].copy()
         rng.shuffle(ixw)
         lw_w = LedoitWolf().fit((P[ixw[:NREF]] - mu_g) / sd_g)
-        inv_w = np.linalg.inv(lw_w.covariance_)
+        inv_w = lw_w.precision_
         a, d, e, f = [], [], [], []
         for dim in dirs:
             Zi = Ze.copy()
@@ -64,7 +67,8 @@ def main():
             di = md(lw_s.location_, inv_s, Zi)
             d.append(roc_auc_score(lab, np.r_[(dd - dd.mean()) / (dd.std() + 1e-9),
                                               (di - dd.mean()) / (dd.std() + 1e-9)]))
-            e.append(roc_auc_score(lab, np.r_[md(m_o, inv_e, Ze), md(m_o, inv_e, Zi)]))
+            e.append(roc_auc_score(lab, np.r_[mahalanobis_cov(m_o, cov_e, Ze),
+                                              mahalanobis_cov(m_o, cov_e, Zi)]))
             f.append(roc_auc_score(lab, np.r_[md(lw_w.location_, inv_w, Ze),
                                               md(lw_w.location_, inv_w, Zi)]))
         a, d, e, f = (np.array(v) for v in (a, d, e, f))

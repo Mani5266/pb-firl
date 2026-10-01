@@ -124,7 +124,7 @@ def _model_streams(Xc):
     mu, sd = Xc[:i1].mean(0), Xc[:i1].std(0) + 1e-9
     Zc = (Xc - mu) / sd
     lw = LedoitWolf().fit(Zc[:i1])
-    inv = np.linalg.inv(lw.covariance_)
+    inv = lw.precision_
 
     def md(Z):
         D = Z - lw.location_

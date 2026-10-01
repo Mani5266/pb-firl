@@ -28,9 +28,9 @@ FIG = os.path.join(ROOT, 'reports', 'figures')
 SEEDS = [42, 43, 44]
 
 
-def md_feat(P, mu, inv):
-    D = P - mu
-    return np.sqrt((D @ inv * D).sum(1))
+def md_feat(P, mu, cov):
+    from src.front_end.geometry import mahalanobis_cov
+    return mahalanobis_cov(mu, cov, P)
 
 
 def main():
@@ -41,16 +41,16 @@ def main():
     pos_rate = (y[tn] == 1).mean()
     pw = torch.tensor([(1 - pos_rate) / pos_rate])
     mu = P[tn][y[tn] == 0].mean(0)
-    inv = np.linalg.inv(np.cov(P[tn][y[tn] == 0].T) + 1e-3 * np.eye(P.shape[1]))
-    md_tr = md_feat(P[tn], mu, inv)
+    cov = np.cov(P[tn][y[tn] == 0].T) + 1e-3 * np.eye(P.shape[1])
+    md_tr = md_feat(P[tn], mu, cov)
     Xb1_tr = torch.from_numpy(np.c_[P[tn] / (np.abs(P[tn]).max() + 1e-9),
                                     md_tr / (md_tr.max() + 1e-9)]).float()
-    md_va = md_feat(P[va], mu, inv)
+    md_va = md_feat(P[va], mu, cov)
     Xb1_va = torch.from_numpy(np.c_[P[va] / (np.abs(P[tn]).max() + 1e-9),
                                     md_va / (md_tr.max() + 1e-9)]).float()
     d = np.load(os.path.join(CACHE, f'sheep_g{GRID}_test_raw.npz'))
     Pt, It, yt = d['pooled'], d['inst'], d['y']
-    md_te = md_feat(Pt, mu, inv)
+    md_te = md_feat(Pt, mu, cov)
     Xb1_te = torch.from_numpy(np.c_[Pt / (np.abs(P[tn]).max() + 1e-9),
                                     md_te / (md_tr.max() + 1e-9)]).float()
     Xt, Xti = torch.from_numpy(Pt).float(), torch.from_numpy(It).float()

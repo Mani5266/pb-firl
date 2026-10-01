@@ -41,9 +41,12 @@
 12. Cold-start curve (30 dairy cows): the apparent crossing around 10–20 reference frames
     is a small-n embedding-space synthetic-shift result without a confidence band; it is not
     a deployment sample-complexity guarantee.
-13. Falsification battery (32 cows, per-cow CIs): own-vs-pop gap +0.020 CI [-0.008, 0.049]
-    (NOT significant); pooled-within-cov gap +0.029 CI [0.006, 0.052]; shrinkage lambda flat
-    (0.25: 0.868, 0.5: 0.868, 0.75: 0.861); wrong-animal gap +0.102 CI [0.064, 0.141].
+13. Falsification battery (32 cows, per-cow CIs, precision_ inverses, max cond 58.6):
+    own-vs-pop gap +0.020 CI [-0.008, 0.049] (NOT significant); pooled-within-cov gap +0.029
+    CI [0.006, 0.052]; shrinkage flat across lambda; wrong-animal gap +0.102 CI [0.064, 0.141].
+    Permuted-identity null (50 shuffles): mean -0.039 CI [-0.050, -0.028], observed +0.020
+    above all shuffles — the gap requires the true grouping, but this does NOT verify that
+    folders are cows.
     Direction sweep (100 dirs): own beats pop in 59% of directions, mean gap +0.010.
     Within-session, synthetic, single-magnitude. Calibration-only AUROC is algebraically
     monotone and cannot support an operational threshold claim.

@@ -6,6 +6,15 @@ model differs from population baselines, while explicitly testing session, ident
 and calibration confounds. It does **not** establish detection of biologically meaningful
 change or cattle pain; the requested longitudinal cattle data are still required for that.
 
+## Results in plain English
+
+We test whether learning what one animal normally looks like helps spot changes later.
+Answer so far: **a little, within the same recording session, and only with enough reference
+frames** — a population model fitted to the current session usually wins otherwise. Identity
+information is easy to read from face embeddings and hard to remove. No real pain was
+detected anywhere in this repo; all change-detection evidence is synthetic injections and
+expression proxies. The value of the work is the honest measurement, not a detector.
+
 ## Results (seed 42, all in `reports/eval_report.json`; corrected 2026-09-26 review pass)
 
 | Question | Result |

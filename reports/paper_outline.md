@@ -37,9 +37,10 @@ label or the ReCowGnition identity data as a pain dataset.
   feature-level synthetic injection followed by model rescoring, and held-out healthy FAR.
 
 ## 4. Results to report
-- `falsify`: population/own-mean/own-covariance/shrinkage/wrong-animal/pooled-within
-  comparisons under a frozen synthetic direction and matched reference budget, with per-cow
-  values and cow-clustered gap CIs. Report: own-vs-pop n.s. (+0.020 [-0.008, 0.049]);
+- `falsify` + `permute`: population/own-mean/own-covariance/shrinkage/wrong-animal/pooled-within
+  comparisons with per-cow values and cow-clustered gap CIs (stable `precision_` inverses).
+  Shuffled-identity null sits below the observed gap (p=0.0/50), so the effect needs the true
+  grouping — which still assumes the unverified folder map. Report: own-vs-pop n.s. (+0.020 [-0.008, 0.049]);
   pooled-within significant (+0.029); shrinkage flat across lambda; wrong-animal gap
   significant (+0.102). Direction sweep: 59% of 100 directions favor own (mean +0.010).
   Controlled perturbation results, not real-change detection.
