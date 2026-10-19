@@ -1,6 +1,6 @@
 {
  "seed": 42,
- "config_hash": "e7081d32d9deb975",
+ "config_hash": "0565fab263b7f179",
  "source_hashes": {
   "src/front_end/geometry.py": "6908a20c5872abeae50a4eb80e8e34e82c5f7dfe87b9bf8a6391d59f5cc582e9",
   "src/front_end/ingest.py": "d35ebe7b26038b87bbd8ecec8588c21d6cee9b6f1341a16370449382743d629c",
@@ -24,7 +24,9 @@
   "src/cusum/cusum.py": "adc85fa1a225f035314d94befed2aa1825fb41f7149f1e6c4ddbdaee8f9fce7f",
   "src/audit/leakage.py": "2dd92dc961f31e98c6ae01c079cc6c05fb82e6c6e3b31bf74b7ea2a5ea7bb630",
   "src/eval/lodo.py": "90133c559d1c6fb76b758746770225fd4680a10a8ca82ce5e917df6b231f28d0",
-  "src/eval/build_report.py": "2b0c31be62093b1dbd71a335cbf3082b8db0c1628de5ac56818910028f55fc3f"
+  "src/eval/build_report.py": "5bd3b8127ce8cfc50df92c4ce7589530f27707034f8fd76cc8cc8d1146a9ef3c",
+  "src/front_end/diagnose_landmarks.py": "adabd420fe5bf3a1eb4615f02297cdf250510864984a61176b16e0da1246d53e",
+  "src/front_end/loco_landmarks.py": "d35e525fe1323c2b144f954c2607adcbd6610e9f492c5f024560ef841fa8ceab"
  },
  "input_hashes": {
   "requirements.txt": "3425f057d0f54cce31f04761e519c6c6a9a229fb889d2f1c5df7e05e6b28cc83",
@@ -1864,6 +1866,77 @@
   "quality_group_protocol": "quartile cut-points fit on train_raw; groups evaluated on test_raw; source-file clustered bootstrap CIs",
   "lodo_status": "blocked: no compatible equine/cattle pain domain labels",
   "note": "Blur stratification is a quality-shift proxy, not species LODO. B4 is deferred because pain data have no identity labels."
+ },
+ "loco": {
+  "folds": [
+   {
+    "heldout": "1036",
+    "train": [
+     "1063",
+     "1087",
+     "1090"
+    ],
+    "val": "1059",
+    "n": 449,
+    "mean_success": 0.7541202672605791,
+    "success@0.50": 0.9977728285077951,
+    "PCK@0.1": 0.8620866883673122
+   },
+   {
+    "heldout": "1063",
+    "train": [
+     "1036",
+     "1087",
+     "1090"
+    ],
+    "val": "1059",
+    "n": 186,
+    "mean_success": 0.039784946236559135,
+    "success@0.50": 0.15591397849462366,
+    "PCK@0.1": 0.33912324234904884
+   },
+   {
+    "heldout": "1059",
+    "train": [
+     "1036",
+     "1087",
+     "1090"
+    ],
+    "val": "1063",
+    "n": 175,
+    "mean_success": 0.9971428571428571,
+    "success@0.50": 1.0,
+    "PCK@0.1": 0.9982417582417582
+   },
+   {
+    "heldout": "1087",
+    "train": [
+     "1036",
+     "1063",
+     "1090"
+    ],
+    "val": "1059",
+    "n": 549,
+    "mean_success": 0.5247723132969034,
+    "success@0.50": 1.0,
+    "PCK@0.1": 0.7842230629115875
+   },
+   {
+    "heldout": "1090",
+    "train": [
+     "1036",
+     "1063",
+     "1087"
+    ],
+    "val": "1059",
+    "n": 531,
+    "mean_success": 0.20677966101694914,
+    "success@0.50": 0.7457627118644068,
+    "PCK@0.1": 0.5457047660437491
+   }
+  ],
+  "mean_success@0.50": 0.7798899037733651,
+  "val_cow_rule": "fewest images among non-held-out cows"
  },
  "legacy_results": {
   "pain_sheep_g5": {

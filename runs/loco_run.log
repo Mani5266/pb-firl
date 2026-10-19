@@ -1,0 +1,27 @@
+C:\Users\manij\AppData\Local\Programs\Python\Python311\Lib\site-packages\requests\__init__.py:113: RequestsDependencyWarning: urllib3 (2.8.0) or chardet (7.4.3)/charset_normalizer (3.5.1) doesn't match a supported version!
+  warnings.warn(
+Fold 1: heldout=1036 train=['1063', '1087', '1090'] val=1059
+  checkpoint exists, skipping training
+  -> heldout 1036: success@0.50=0.9978
+Fold 2: heldout=1063 train=['1036', '1087', '1090'] val=1059
+  checkpoint exists, skipping training
+  -> heldout 1063: success@0.50=0.1559
+Fold 3: heldout=1059 train=['1036', '1087', '1090'] val=1063
+  checkpoint exists, skipping training
+  -> heldout 1059: success@0.50=1.0000
+Fold 4: heldout=1087 train=['1036', '1063', '1090'] val=1059
+  checkpoint exists, skipping training
+  -> heldout 1087: success@0.50=1.0000
+Fold 5: heldout=1090 train=['1036', '1063', '1087'] val=1059
+  fold5 ep0 loss=2.319 valhit=1.000 t=255s
+  fold5 ep1 loss=1.726 valhit=1.000 t=505s
+  fold5 ep2 loss=1.589 valhit=1.000 t=754s
+  fold5 ep3 loss=1.489 valhit=1.000 t=998s
+  fold5 ep4 loss=1.263 valhit=1.000 t=1239s
+  fold5 ep5 loss=1.208 valhit=1.000 t=1479s
+  fold5 ep6 loss=1.185 valhit=1.000 t=1719s
+  fold5 ep7 loss=1.171 valhit=1.000 t=1960s
+  -> heldout 1090: success@0.50=0.7458
+
+Mean LOCO success@0.50 = 0.7799
+saved D:\Major Projrct final\pb-firl\runs\features_cache\loco_results.json

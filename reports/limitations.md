@@ -17,6 +17,12 @@
 6. Landmark detector weak on held-out cow (val success@0.50 0.242, corrected area; n=1 cow).
    Earlier 0.66 AP50 was an x2*y2 area bug (fixed). Metric renamed: mean OKS success rate,
    not COCO AP. Downstream geometry uses GT keypoints.
+   LOCO (5-fold, 2026-10-19): mean success@0.50 0.780 across all cows, but cow 1063
+   remains a systematic failure (0.156) due to scale variance (3.2x box-area spread) and
+   pose asymmetry (right-side keypoints ~1.8x worse than left). Cow 1090 degrades to
+   0.746 as held-out despite being a training cow in the original split. Cross-animal
+   generalization is the confirmed #1 blocker; 3 training cows cannot cover the
+   appearance space. Until this moves, no downstream deployment claims.
 7. Cattle frames are UNLABELLED assumed reference (not confirmed healthy); baseline validated on
    injected deviations, not real pain. Beef n=5 gap not significant (paired t p=0.24) — beef is
    supporting evidence for the dairy-scale finding, not standalone proof.
