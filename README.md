@@ -106,7 +106,7 @@ python -m unittest discover -s tests       # 32 math/protocol/count/integrity ch
 ## What we've achieved to date
 
 - **Public-data pipeline is auditable**: four local datasets/caches are inventoried, primary
-  artifacts are required by the report builder, source/data hashes are recorded, and 32 tests
+  artifacts are required by the report builder, source/data hashes are recorded, and 35 tests
   cover geometry, CUSUM protocol helpers, cluster bootstrap, split integrity, and imbalance baselines.
 - **Controlled synthetic benchmark**: the falsification battery compares population, own-mean,
   own-covariance, shrinkage (lambda sweep), pooled-within-cov, and wrong-animal references with

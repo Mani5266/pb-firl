@@ -29,10 +29,10 @@
 - As held-out: success@0.50 = 0.746 — significant drop
 - Suggests the model memorizes training cow appearances rather than learning generalizable features
 
-### 3. Performance分布是 bimodal 的，由 cow 决定
+### 3. Performance is bimodal and cow-dependent
 - Performance is bimodal and cow-dependent: 3 cows ≥ 0.998, one at 0.746, one at 0.156
-- Like-for-like on cow 1063 (same cow, old config vs LOCO config): 0.242 → 0.156 — 没有改善
-- Mean 0.780 掩盖了 cow 级别的差异 — worst-cow 才是 deployability 的瓶颈
+- Like-for-like on cow 1063 (same cow, old config vs LOCO config): 0.242 → 0.156 — no improvement
+- Mean 0.780 masks cow-level differences — worst-cow is the deployability bottleneck
 - Cross-animal generalization is the confirmed bottleneck
 
 ### 4. Val cow selection worked correctly

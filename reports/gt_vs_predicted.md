@@ -59,6 +59,12 @@ All GT shift-3.0 arms score ≥ 0.945 — well above the 0.9 threshold. The batt
 
 The GT-vs-predicted deviation battery **survives** on CattleFace public data with LOCO checkpoints. Predicted keypoints preserve 82–100% of the GT battery's sensitivity, with no systematic degradation. The earlier "battery not sensitive" conclusion was an artefact of a scoring bug and is retracted.
 
+## Interpretation Rules
+
+1. **Shifts are injected in FEATURE space on predicted ROI features.** This proves: detector noise does not destroy feature-space shift sensitivity at these magnitudes, plausibly because deviation is scored against the cow's OWN reference from the SAME detector, so consistent per-cow detector bias cancels. This does NOT prove: that a real facial change in the image survives detection end-to-end, or that the detector is accurate in absolute terms (LOCO OKS stands as reported).
+
+2. **"Preserves 82–100%" is the range of predicted-arm AUROC across cows and shifts (0.823–1.000), not a mean.** At 20+20 frames the per-cow gaps (−0.05 to +0.11) are within noise — no systematic degradation claim is made.
+
 ## Artifacts
 - `runs/features_cache/gt_vs_predicted.json` — corrected per-cow battery results
 - `src/eval/gt_vs_predicted.py` — battery script (fixed scoring)
