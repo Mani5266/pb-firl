@@ -29,9 +29,10 @@
 - As held-out: success@0.50 = 0.746 — significant drop
 - Suggests the model memorizes training cow appearances rather than learning generalizable features
 
-### 3. Mean LOCO = 0.780 vs single held-out 0.24
-- 3.2× improvement over the original single-cow headline
-- But still below the 0.90+ needed for reliable geometry extraction
+### 3. Performance分布是 bimodal 的，由 cow 决定
+- 3 cows ≥ 0.998, one at 0.746, one at 0.156
+- Like-for-like on cow 1063 (same cow, old config vs LOCO config): 0.242 → 0.156 — 没有改善
+- Mean 0.780 掩盖了 cow 级别的差异 — worst-cow 才是 deployability 的瓶颈
 - Cross-animal generalization is the confirmed bottleneck
 
 ### 4. Val cow selection worked correctly
@@ -44,7 +45,7 @@
 | Metric | Original (val=1063) | LOCO Mean |
 |--------|---------------------|-----------|
 | Success@0.50 | 0.242 | 0.780 |
-| n held-out | 186 | 1,541 (total) |
+| n held-out | 186 | 1,890 (total) |
 | Generalization evidence | Single cow | 5 cows rotated |
 
 ## Implications
@@ -58,3 +59,4 @@
 - `runs/features_cache/loco_results.json` — full per-fold metrics
 - `runs/checkpoints/loco/fold{1-5}_heldout*.pth` — 5 fold checkpoints (~226 MB each)
 - `src/front_end/loco_landmarks.py` — LOCO training + eval script
+- `runs/loco_train_summary.json` — per-fold training config, epochs, wall-clock, checkpoint hash

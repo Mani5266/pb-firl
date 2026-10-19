@@ -1,0 +1,77 @@
+[
+ {
+  "fold": 1,
+  "heldout": "1036",
+  "train": [
+   "1063",
+   "1087",
+   "1090"
+  ],
+  "val": "1059",
+  "best_ep": 2,
+  "val_hit_at_best": 0.9829,
+  "config": "8 epochs, lr=1e-4, batch=2, min_size=512, frozen backbone",
+  "checkpoint": "loco\\fold1_heldout1036.pth",
+  "checkpoint_sha256_16": "24b14552e29b889e"
+ },
+ {
+  "fold": 2,
+  "heldout": "1063",
+  "train": [
+   "1036",
+   "1087",
+   "1090"
+  ],
+  "val": "1059",
+  "best_ep": 0,
+  "val_hit_at_best": 1.0,
+  "config": "8 epochs, lr=1e-4, batch=2, min_size=512, frozen backbone",
+  "checkpoint": "loco\\fold2_heldout1063.pth",
+  "checkpoint_sha256_16": "ac8c7335e434db04"
+ },
+ {
+  "fold": 3,
+  "heldout": "1059",
+  "train": [
+   "1036",
+   "1087",
+   "1090"
+  ],
+  "val": "1063",
+  "best_ep": 2,
+  "val_hit_at_best": 0.4301,
+  "config": "8 epochs, lr=1e-4, batch=2, min_size=512, frozen backbone",
+  "checkpoint": "loco\\fold3_heldout1059.pth",
+  "checkpoint_sha256_16": "eebd83ed64070498"
+ },
+ {
+  "fold": 4,
+  "heldout": "1087",
+  "train": [
+   "1036",
+   "1063",
+   "1090"
+  ],
+  "val": "1059",
+  "best_ep": 0,
+  "val_hit_at_best": 1.0,
+  "config": "8 epochs, lr=1e-4, batch=2, min_size=512, frozen backbone",
+  "checkpoint": "loco\\fold4_heldout1087.pth",
+  "checkpoint_sha256_16": "3c8e811ed49c85f9"
+ },
+ {
+  "fold": 5,
+  "heldout": "1090",
+  "train": [
+   "1036",
+   "1063",
+   "1087"
+  ],
+  "val": "1059",
+  "best_ep": 0,
+  "val_hit_at_best": 1.0,
+  "config": "8 epochs, lr=1e-4, batch=2, min_size=512, frozen backbone",
+  "checkpoint": "loco\\fold5_heldout1090.pth",
+  "checkpoint_sha256_16": "1bfa9f5db7cb1182"
+ }
+]
