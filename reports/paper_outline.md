@@ -4,8 +4,7 @@
 **Per-Animal Reference Baselines for Controlled Facial-Change Detection in Cattle: A
 Falsification-First Audit on Public Data** (submitted title, locked)
 
-Superseded draft title: Per-animal reference baselines for controlled facial-change detection: an adversarial
-public-data audit**
+Superseded draft title: Per-animal reference baselines for controlled facial-change detection: an adversarial public-data audit
 
 ## Central claim supported by the current repository
 The repository implements and audits a per-animal Gaussian reference pipeline. On public

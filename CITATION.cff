@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-title: "PB-FIRL: Personalised, Weakly-Supervised, Identity-Audited Livestock Pain Recognition"
+title: "Per-Animal Reference Baselines for Controlled Facial-Change Detection in Cattle: A Falsification-First Audit on Public Data"
 authors:
   - family-names: Mani5266
 message: "If you use this software, please cite it as below."

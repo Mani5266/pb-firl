@@ -90,7 +90,7 @@ python -m src.eval.falsify                # synthetic kill-test: matched control
 python -m src.eval.session_order          # cross-session reference/probe
 python -m src.eval.coldstart              # reference-budget curve
 python -m src.eval.build_report           # strict hashed reports/eval_report.json
-python -m unittest discover -s tests       # 25 math/protocol/count/integrity checks
+python -m unittest discover -s tests       # 32 math/protocol/count/integrity checks
 ```
 
 ## Data (see `data/README.md` for URLs, licenses, checksums)
