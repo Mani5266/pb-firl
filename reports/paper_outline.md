@@ -1,7 +1,10 @@
 # PB-FIRL paper outline (public-data audit scope)
 
 ## Proposed title
-**Per-animal reference baselines for controlled facial-change detection: an adversarial
+**Per-Animal Reference Baselines for Controlled Facial-Change Detection in Cattle: A
+Falsification-First Audit on Public Data** (submitted title, locked)
+
+Superseded draft title: Per-animal reference baselines for controlled facial-change detection: an adversarial
 public-data audit**
 
 ## Central claim supported by the current repository

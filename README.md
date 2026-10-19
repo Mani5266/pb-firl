@@ -1,4 +1,4 @@
-# PB-FIRL — Per-animal reference baselines for controlled change detection
+# PB-FIRL — Per-Animal Reference Baselines for Controlled Facial-Change Detection in Cattle: A Falsification-First Audit on Public Data
 
 B.Tech final-year major project. The public-data implementation is now scoped as a
 **controlled synthetic-shift and proxy-label study**: it asks when a per-animal reference
@@ -24,7 +24,7 @@ expression proxies. The value of the work is the honest measurement, not a detec
 | RQ2 — pooling (matched, clean split) | Cached 3-seed test_raw AUROC: pool+BCE **0.883**, attn+BCE **0.859**, attn+focal **0.875**; no equivalence claim |
 | RQ3 — identity leakage | Balanced accuracy and majority baselines are now reported; nonlinear residual identity remains |
 | RQ4 — quality shift | Blur groups are cut from train_raw and evaluated on test_raw with source-clustered CIs; this is not species LODO |
-| Early warning | Chronological CUSUM now calibrates on the running statistic, rescored feature-level injections, and reports held-out drift plus miss upper bounds |
+| CUSUM (synthetic events) | Chronological CUSUM now calibrates on the running statistic, rescored feature-level injections, and reports held-out drift plus miss upper bounds |
 | Landmarks | 13-pt KRCNN: held-out success@0.50 **0.24** (corrected area; 1 cow each) |
 
 Key corrections from review: landmark area bug fixed (0.66 was inflated); balanced sheep `test`
@@ -49,7 +49,7 @@ animal/source-level where computed; frame counts measure scale, never independen
                                         │
             ┌───────────────────────────┼───────────────────────────┐
             ▼                           ▼                           ▼
-   PERSONALISATION              PAIN (sheep proxy)            EARLY WARNING
+   PERSONALISATION              PAIN (sheep proxy)            CUSUM (SYNTH)
    per-cow MVN (Ledoit-Wolf)    frozen ResNet-50 → 25         upper CUSUM (k=0.5)
    Mahalanobis deviation,       patch instances →             on z-deviation stream;
    per-cow z-score;             mean-pool MLP (default)       fit/calibrate/eval split
@@ -106,7 +106,7 @@ python -m unittest discover -s tests       # 25 math/protocol/count/integrity ch
 ## What we've achieved to date
 
 - **Public-data pipeline is auditable**: four local datasets/caches are inventoried, primary
-  artifacts are required by the report builder, source/data hashes are recorded, and 25 tests
+  artifacts are required by the report builder, source/data hashes are recorded, and 32 tests
   cover geometry, CUSUM protocol helpers, cluster bootstrap, split integrity, and imbalance baselines.
 - **Controlled synthetic benchmark**: the falsification battery compares population, own-mean,
   own-covariance, shrinkage (lambda sweep), pooled-within-cov, and wrong-animal references with
