@@ -22,7 +22,7 @@
 ### 1. Cow 1063 remains a systematic failure
 - Success@0.50 = 0.156, worse than the original 0.24 single held-out
 - Confirms diagnosis: cow 1063's scale variance (3.2× spread) and pose asymmetry (R:L ≈ 1.8:1) are outside the training distribution
-- The model cannot generalize to this cow even with 4 other cows in training
+- The model cannot generalize to this cow even with 3 other cows in training
 
 ### 2. Cow 1090 degrades as held-out
 - Was in training set for original model (success@0.50 = 1.0 on test cows)
@@ -30,7 +30,7 @@
 - Suggests the model memorizes training cow appearances rather than learning generalizable features
 
 ### 3. Performance分布是 bimodal 的，由 cow 决定
-- 3 cows ≥ 0.998, one at 0.746, one at 0.156
+- Performance is bimodal and cow-dependent: 3 cows ≥ 0.998, one at 0.746, one at 0.156
 - Like-for-like on cow 1063 (same cow, old config vs LOCO config): 0.242 → 0.156 — 没有改善
 - Mean 0.780 掩盖了 cow 级别的差异 — worst-cow 才是 deployability 的瓶颈
 - Cross-animal generalization is the confirmed bottleneck

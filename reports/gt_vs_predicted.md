@@ -1,68 +1,65 @@
-# GT-vs-Predicted Deviation Battery (2026-10-19)
+# GT-vs-Predicted Deviation Battery (2026-10-19, corrected)
 
-## Protocol
+## RETRACTION (2026-10-19)
+
+The initial version of this report concluded "the battery is not sensitive at n=5 cows with 12-D geometric features." **That conclusion is retracted.** The experiment had a scoring bug: per-group standardisation subtracted the shift signal by construction, forcing AUROC to ≈ 0.5 regardless of keypoint source. The original battery (`src/baseline/gaussian.py`) uses a shared scale from unshifted distances and reaches GT AUROC 0.917/0.961 on the same 5 cows and same ROI-12D features.
+
+## Bug Description
+
+```python
+# BUG (per-group standardisation — kills the shift signal):
+np.r_[(d - d.mean()) / (d.std() + 1e-9), (di - di.mean()) / (di.std() + 1e-9)]
+
+# FIX (shared scale from unshifted distances):
+z_mu, z_sd = d.mean(), d.std() + 1e-9
+np.r_[(d - z_mu) / z_sd, (di - z_mu) / z_sd]
+```
+
+Additionally, feature standardisation (mu, sd) is now fit on reference frames only, matching the repo's reference-only discipline.
+
+## Corrected Protocol
 - Per cow: LOCO checkpoint → predicted keypoints → ROI-12D features
 - Per cow: GT keypoints → ROI-12D features
 - Per cow: own-mean + own-cov baseline, 20 ref + 20 eval frames, synthetic shifts 1.5/3.0
+- Shared-scale scoring from unshifted distances; feature scaler fit on reference frames only
 - No pooled number — per-cow only
 
-## Results
+## Corrected Results
 
 | Cow | GT shift=1.5 | Pred shift=1.5 | GT shift=3.0 | Pred shift=3.0 |
 |-----|-------------|---------------|-------------|---------------|
-| 1036 | 0.465 | 0.513 | 0.478 | 0.515 |
-| 1063 | 0.540 | 0.498 | 0.540 | 0.523 |
-| 1059 | 0.505 | 0.473 | 0.515 | 0.475 |
-| 1087 | 0.505 | 0.505 | 0.513 | 0.505 |
-| 1090 | 0.523 | 0.545 | 0.535 | 0.568 |
+| 1036 | 0.900 | 0.920 | 1.000 | 1.000 |
+| 1063 | 0.948 | 0.898 | 1.000 | 0.985 |
+| 1059 | 0.958 | 1.000 | 1.000 | 1.000 |
+| 1087 | 0.870 | 0.823 | 1.000 | 0.952 |
+| 1090 | 0.840 | 0.945 | 0.945 | 0.980 |
 
-## Key Finding: Battery Is Not Sensitive on CattleFace
+## Sanity Gate
 
-**All AUROC values are ≈ 0.5 (random guess), for both GT and predicted keypoints.**
+All GT shift-3.0 arms score ≥ 0.945 — well above the 0.9 threshold. The battery is sensitive.
 
-This is a **negative result** — the deviation battery cannot distinguish shifted from unshifted frames on CattleFace ROI-12D features, regardless of keypoint source.
+## Per-Cow GT-vs-Predicted Gap
 
-## Why This Happens
+| Cow | Gap shift=1.5 (Pred−GT) | Gap shift=3.0 (Pred−GT) |
+|-----|------------------------|------------------------|
+| 1036 | +0.020 | 0.000 |
+| 1063 | −0.050 | −0.015 |
+| 1059 | +0.042 | 0.000 |
+| 1087 | −0.048 | −0.048 |
+| 1090 | +0.105 | +0.035 |
 
-### 1. Too few cows for population baseline
-- CattleFace: 5 cows total
-- ReCowGnition (falsify.json): 32 cows, D_full AUROC = 0.849 at shift=1.5
-- The battery needs a population reference to detect deviations; 5 cows cannot provide this
+## Key Findings
 
-### 2. ROI-12D features are geometry-only
-- CattleFace ROI: 12 geometric descriptors (ear/eye/muzzle ratios)
-- ReCowGnition embeddings: 64-D PCA of deep features
-- Geometric features capture shape but not appearance/ texture changes that dominate real pain responses
-
-### 3. Small per-cow sample size
-- 20 ref + 20 eval = 40 frames per cow per shift
-- With 12-D features and 20 reference frames, LedoitWolf covariance is poorly conditioned
-- Results in near-random AUROC
-
-## Comparison to ReCowGnition Falsification
-
-| Metric | CattleFace (this battery) | ReCowGnition (falsify.json) |
-|--------|--------------------------|----------------------------|
-| Cows | 5 | 32 |
-| Features | ROI-12D | Embedding-64D |
-| Shift 1.5 own-mean AUROC | 0.465–0.540 | 0.849 |
-| Shift 3.0 own-mean AUROC | 0.478–0.540 | — |
-| Battery sensitive | **No** | Yes |
-
-## Implications
-
-1. **GT-vs-predicted gap is unmeasurable on CattleFace** — the battery itself is not sensitive enough with 5 cows and 12-D geometric features
-2. **This is NOT evidence that predicted keypoints are "good enough"** — it means the evaluation tool lacks power
-3. **The ReCowGnition dairy-scale battery remains the only validated deviation detector** — but it requires dairy embeddings, not beef cattle ROI features
-4. **For a meaningful GT-vs-predicted gap, we would need:**
-   - More cows (≥ 20) for a stable population baseline
-   - Deep features (not just geometry) for sensitivity
-   - Or accept that this gap cannot be measured on public data
+1. **The battery survives on all 5 cows.** Predicted keypoints from LOCO checkpoints produce AUROC 0.82–1.00 across cows and shifts.
+2. **No systematic degradation.** Predicted-vs-GT gaps range from −0.05 to +0.11, with no consistent direction. Some cows improve with predicted keypoints (1090: +0.105 at shift=1.5), others degrade slightly (1087: −0.048).
+3. **Cow 1063 does not collapse the battery.** Despite landmark OKS success@0.50 of 0.156, the deviation battery still detects shifts (pred AUROC 0.898/0.985). The geometric features remain informative even with noisy keypoints.
+4. **The worst predicted-arm result is 0.823** (cow 1087, shift=1.5) — still well above chance.
 
 ## Conclusion
 
-The GT-vs-predicted deviation battery **does not survive** on CattleFace public data — not because predicted keypoints are bad, but because the battery itself is underpowered at n=5 cows with 12-D geometric features. This is a limitation of the evaluation tool, not a validation of the landmark detector.
+The GT-vs-predicted deviation battery **survives** on CattleFace public data with LOCO checkpoints. Predicted keypoints preserve 82–100% of the GT battery's sensitivity, with no systematic degradation. The earlier "battery not sensitive" conclusion was an artefact of a scoring bug and is retracted.
 
 ## Artifacts
-- `runs/features_cache/gt_vs_predicted.json` — full per-cow battery results
-- `src/eval/gt_vs_predicted.py` — battery script (reproducible)
+- `runs/features_cache/gt_vs_predicted.json` — corrected per-cow battery results
+- `src/eval/gt_vs_predicted.py` — battery script (fixed scoring)
+- `tests/test_gt_vs_predicted.py` — positive-control tests (GT shift-3.0 AUROC > 0.9)

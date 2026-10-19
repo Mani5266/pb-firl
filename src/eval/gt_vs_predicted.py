@@ -62,7 +62,7 @@ def run_battery(Z, cow, rng):
         return None
     rng.shuffle(ix)
     ref, evl = ix[:NREF], ix[NREF:NREF + NEVL]
-    mu, sd = Z.mean(0), Z.std(0) + 1e-9
+    mu, sd = Z[ref].mean(0), Z[ref].std(0) + 1e-9
     Zs = (Z - mu) / sd
     Zr, Ze = Zs[ref], Zs[evl]
     dim = rng.choice(Z.shape[1], min(NDIM, Z.shape[1]), replace=False)
@@ -74,8 +74,9 @@ def run_battery(Z, cow, rng):
         lw_s = LedoitWolf().fit(Zr)
         inv_s = lw_s.precision_
         d, di = md(lw_s.location_, inv_s, Ze), md(lw_s.location_, inv_s, Zi)
+        z_mu, z_sd = d.mean(), d.std() + 1e-9
         res[f'shift_{shift}_own'] = roc_auc_score(
-            lab, np.r_[(d - d.mean()) / (d.std() + 1e-9), (di - di.mean()) / (di.std() + 1e-9)])
+            lab, np.r_[(d - z_mu) / z_sd, (di - z_mu) / z_sd])
     return res
 
 

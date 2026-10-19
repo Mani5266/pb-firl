@@ -27,7 +27,7 @@ SRC = [
     'src/eval/permute.py', 'src/cusum/cusum.py', 'src/audit/leakage.py',
     'src/eval/lodo.py', 'src/eval/build_report.py',
     'src/front_end/diagnose_landmarks.py', 'src/front_end/loco_landmarks.py',
-    'src/eval/gt_vs_predicted.py',
+    'src/eval/gt_vs_predicted.py', 'tests/test_gt_vs_predicted.py',
 ]
 PRIMARY_RESULTS = [
     'landmark_ap', 'variance', 'baseline_loio', 'pain_fair', 'sheep_stats',

@@ -2,11 +2,10 @@
 
 1. CattleFace-RGBT identity count: 96 unique cow_tag IDs observed in cow_mapping.json/metadata.csv
    vs 108 claimed. Pipeline uses 5 folder-mapped cows (data/README assumption, UNVERIFIED).
-2. GT-vs-predicted deviation battery (2026-10-19): all 5 cows yield AUROC ≈ 0.5 (random),
-   for both GT and predicted keypoints. The battery is not sensitive at n=5 cows with 12-D
-   geometric ROI features — this is a power limitation of the evaluation tool, not a
-   validation of the landmark detector. The ReCowGnition dairy-scale battery (falsify.json,
-   32 cows, 64-D embeddings) remains the only sensitive deviation detector.
+2. GT-vs-predicted deviation battery (2026-10-19, corrected): predicted keypoints from
+   LOCO checkpoints preserve 82–100% of GT battery sensitivity across all 5 cows.
+   No systematic degradation (gaps −0.05 to +0.11). Earlier "battery not sensitive"
+   conclusion retracted — it was a scoring bug (per-group standardisation).
 2. CattleFace-RGBT temperature cows: 25 unique observed vs 21 claimed.
 3. ReCowGnition: LOCAL (6838/161 verified 2026-09-24, CC BY-NC-SA 4.0, kept out of git).
    No pain labels -> B4 adversarial still deferred; beef-trained landmarks don't transfer to
