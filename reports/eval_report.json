@@ -1,6 +1,6 @@
 {
  "seed": 42,
- "config_hash": "0565fab263b7f179",
+ "config_hash": "e2dc6f1a136caf2a",
  "source_hashes": {
   "src/front_end/geometry.py": "6908a20c5872abeae50a4eb80e8e34e82c5f7dfe87b9bf8a6391d59f5cc582e9",
   "src/front_end/ingest.py": "d35ebe7b26038b87bbd8ecec8588c21d6cee9b6f1341a16370449382743d629c",
@@ -24,9 +24,10 @@
   "src/cusum/cusum.py": "adc85fa1a225f035314d94befed2aa1825fb41f7149f1e6c4ddbdaee8f9fce7f",
   "src/audit/leakage.py": "2dd92dc961f31e98c6ae01c079cc6c05fb82e6c6e3b31bf74b7ea2a5ea7bb630",
   "src/eval/lodo.py": "90133c559d1c6fb76b758746770225fd4680a10a8ca82ce5e917df6b231f28d0",
-  "src/eval/build_report.py": "5bd3b8127ce8cfc50df92c4ce7589530f27707034f8fd76cc8cc8d1146a9ef3c",
+  "src/eval/build_report.py": "95bfe386f442ff193ffa8b61aef7019bc837c2f8a112d128433654d9705f12e0",
   "src/front_end/diagnose_landmarks.py": "adabd420fe5bf3a1eb4615f02297cdf250510864984a61176b16e0da1246d53e",
-  "src/front_end/loco_landmarks.py": "d35e525fe1323c2b144f954c2607adcbd6610e9f492c5f024560ef841fa8ceab"
+  "src/front_end/loco_landmarks.py": "d35e525fe1323c2b144f954c2607adcbd6610e9f492c5f024560ef841fa8ceab",
+  "src/eval/gt_vs_predicted.py": "4d7577353b760f5011e38b24c818984dca0efdf409156d627e29f88787bf0762"
  },
  "input_hashes": {
   "requirements.txt": "3425f057d0f54cce31f04761e519c6c6a9a229fb889d2f1c5df7e05e6b28cc83",
@@ -1937,6 +1938,61 @@
   ],
   "mean_success@0.50": 0.7798899037733651,
   "val_cow_rule": "fewest images among non-held-out cows"
+ },
+ "gt_vs_predicted": {
+  "per_cow": {
+   "1036": {
+    "gt": {
+     "shift_1.5_own": 0.46499999999999997,
+     "shift_3.0_own": 0.47750000000000004
+    },
+    "pred": {
+     "shift_1.5_own": 0.5125000000000001,
+     "shift_3.0_own": 0.515
+    }
+   },
+   "1063": {
+    "gt": {
+     "shift_1.5_own": 0.54,
+     "shift_3.0_own": 0.54
+    },
+    "pred": {
+     "shift_1.5_own": 0.49750000000000005,
+     "shift_3.0_own": 0.5225
+    }
+   },
+   "1059": {
+    "gt": {
+     "shift_1.5_own": 0.505,
+     "shift_3.0_own": 0.515
+    },
+    "pred": {
+     "shift_1.5_own": 0.4724999999999999,
+     "shift_3.0_own": 0.475
+    }
+   },
+   "1087": {
+    "gt": {
+     "shift_1.5_own": 0.505,
+     "shift_3.0_own": 0.5125
+    },
+    "pred": {
+     "shift_1.5_own": 0.5049999999999999,
+     "shift_3.0_own": 0.505
+    }
+   },
+   "1090": {
+    "gt": {
+     "shift_1.5_own": 0.5225,
+     "shift_3.0_own": 0.535
+    },
+    "pred": {
+     "shift_1.5_own": 0.545,
+     "shift_3.0_own": 0.5675
+    }
+   }
+  },
+  "protocol": "LOCO checkpoints, ROI-12D, matched 20-frame budgets, synthetic shifts 1.5/3.0"
  },
  "legacy_results": {
   "pain_sheep_g5": {
