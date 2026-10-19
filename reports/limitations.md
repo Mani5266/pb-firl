@@ -2,10 +2,6 @@
 
 1. CattleFace-RGBT identity count: 96 unique cow_tag IDs observed in cow_mapping.json/metadata.csv
    vs 108 claimed. Pipeline uses 5 folder-mapped cows (data/README assumption, UNVERIFIED).
-2. GT-vs-predicted deviation battery (2026-10-19, corrected): predicted keypoints from
-   LOCO checkpoints preserve 82–100% of GT battery sensitivity across all 5 cows.
-   No systematic degradation (gaps −0.05 to +0.11). Earlier "battery not sensitive"
-   conclusion retracted — it was a scoring bug (per-group standardisation).
 2. CattleFace-RGBT temperature cows: 25 unique observed vs 21 claimed.
 3. ReCowGnition: LOCAL (6838/161 verified 2026-09-24, CC BY-NC-SA 4.0, kept out of git).
    No pain labels -> B4 adversarial still deferred; beef-trained landmarks don't transfer to
@@ -64,3 +60,9 @@
     session-matched pop 0.739, gap CI crosses zero; at n_ref=10 (31-39 cows) session-matched
     pop WINS significantly (gap -0.06..-0.09). Personalization advantage not established
     across sessions; small-ref regime favors same-session population fit.
+15. GT-vs-predicted battery (2026-10-19, corrected; Step 4b: max per-cow budgets,
+    shifts 0.75/1.0/1.5/3.0, 3 seeds): feature-space shifts stay detectable with predicted
+    keypoints on all cows at shift>=1.5; the only material gap is cow 1063 at small shifts
+    (pred 0.698 vs GT 0.943 at 0.75). Shifts are injected in FEATURE space — this does not
+    show a real image change survives detection end-to-end. Earlier "battery not sensitive"
+    conclusion RETRACTED: it was a per-group-standardisation scoring bug.

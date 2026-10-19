@@ -1,6 +1,6 @@
 {
  "seed": 42,
- "config_hash": "442b74deff5bf691",
+ "config_hash": "b5a39a729c14c4b8",
  "source_hashes": {
   "src/front_end/geometry.py": "6908a20c5872abeae50a4eb80e8e34e82c5f7dfe87b9bf8a6391d59f5cc582e9",
   "src/front_end/ingest.py": "d35ebe7b26038b87bbd8ecec8588c21d6cee9b6f1341a16370449382743d629c",
@@ -27,8 +27,8 @@
   "src/eval/build_report.py": "48dabcfe03f1ea9383941a8c44bc65a67a4cee10a8b814828a168a64a13aa74c",
   "src/front_end/diagnose_landmarks.py": "adabd420fe5bf3a1eb4615f02297cdf250510864984a61176b16e0da1246d53e",
   "src/front_end/loco_landmarks.py": "d35e525fe1323c2b144f954c2607adcbd6610e9f492c5f024560ef841fa8ceab",
-  "src/eval/gt_vs_predicted.py": "7a07451614156a4c56e0f26cbcd0fc383ae15ddfb4a3c0a40c2c606d530daf55",
-  "tests/test_gt_vs_predicted.py": "6c627ef1f9b7eb97d53a0638edf0ef826b94cca2a8fda553c0052e4363ebf9ad"
+  "src/eval/gt_vs_predicted.py": "7c1b52775de82a170abae2ae219deee0d7d1809f68aae7c320be0096d97a00cd",
+  "tests/test_gt_vs_predicted.py": "a53bdd0df7193cb02031e478d4fe401e3f06e26b3baa212ba691f06219446e9f"
  },
  "input_hashes": {
   "requirements.txt": "3425f057d0f54cce31f04761e519c6c6a9a229fb889d2f1c5df7e05e6b28cc83",
@@ -1944,56 +1944,327 @@
   "per_cow": {
    "1036": {
     "gt": {
-     "shift_1.5_own": 0.8999999999999999,
-     "shift_3.0_own": 1.0
+     "shift_0.75": {
+      "mean": 0.7365,
+      "ci95": [
+       0.6876,
+       0.7893
+      ]
+     },
+     "shift_1.0": {
+      "mean": 0.8459,
+      "ci95": [
+       0.788,
+       0.9021
+      ]
+     },
+     "shift_1.5": {
+      "mean": 0.968,
+      "ci95": [
+       0.9407,
+       0.9894
+      ]
+     },
+     "shift_3.0": {
+      "mean": 1.0,
+      "ci95": [
+       1.0,
+       1.0
+      ]
+     }
     },
     "pred": {
-     "shift_1.5_own": 0.92,
-     "shift_3.0_own": 1.0
+     "shift_0.75": {
+      "mean": 0.7048,
+      "ci95": [
+       0.6749,
+       0.7326
+      ]
+     },
+     "shift_1.0": {
+      "mean": 0.8012,
+      "ci95": [
+       0.7636,
+       0.839
+      ]
+     },
+     "shift_1.5": {
+      "mean": 0.9353,
+      "ci95": [
+       0.9189,
+       0.9593
+      ]
+     },
+     "shift_3.0": {
+      "mean": 0.9879,
+      "ci95": [
+       0.9843,
+       0.9912
+      ]
+     }
     }
    },
    "1063": {
     "gt": {
-     "shift_1.5_own": 0.9475,
-     "shift_3.0_own": 1.0
+     "shift_0.75": {
+      "mean": 0.9434,
+      "ci95": [
+       0.9162,
+       0.963
+      ]
+     },
+     "shift_1.0": {
+      "mean": 0.9955,
+      "ci95": [
+       0.9937,
+       0.9966
+      ]
+     },
+     "shift_1.5": {
+      "mean": 1.0,
+      "ci95": [
+       1.0,
+       1.0
+      ]
+     },
+     "shift_3.0": {
+      "mean": 1.0,
+      "ci95": [
+       1.0,
+       1.0
+      ]
+     }
     },
     "pred": {
-     "shift_1.5_own": 0.8975000000000001,
-     "shift_3.0_own": 0.985
+     "shift_0.75": {
+      "mean": 0.6981,
+      "ci95": [
+       0.636,
+       0.8034
+      ]
+     },
+     "shift_1.0": {
+      "mean": 0.7993,
+      "ci95": [
+       0.73,
+       0.9087
+      ]
+     },
+     "shift_1.5": {
+      "mean": 0.9357,
+      "ci95": [
+       0.8925,
+       0.9856
+      ]
+     },
+     "shift_3.0": {
+      "mean": 1.0,
+      "ci95": [
+       1.0,
+       1.0
+      ]
+     }
     }
    },
    "1059": {
     "gt": {
-     "shift_1.5_own": 0.9575,
-     "shift_3.0_own": 1.0
+     "shift_0.75": {
+      "mean": 0.7862,
+      "ci95": [
+       0.7211,
+       0.8522
+      ]
+     },
+     "shift_1.0": {
+      "mean": 0.8858,
+      "ci95": [
+       0.8243,
+       0.945
+      ]
+     },
+     "shift_1.5": {
+      "mean": 0.977,
+      "ci95": [
+       0.9502,
+       0.999
+      ]
+     },
+     "shift_3.0": {
+      "mean": 1.0,
+      "ci95": [
+       1.0,
+       1.0
+      ]
+     }
     },
     "pred": {
-     "shift_1.5_own": 1.0,
-     "shift_3.0_own": 1.0
+     "shift_0.75": {
+      "mean": 0.874,
+      "ci95": [
+       0.8704,
+       0.8781
+      ]
+     },
+     "shift_1.0": {
+      "mean": 0.9281,
+      "ci95": [
+       0.9134,
+       0.9375
+      ]
+     },
+     "shift_1.5": {
+      "mean": 0.9612,
+      "ci95": [
+       0.9563,
+       0.9647
+      ]
+     },
+     "shift_3.0": {
+      "mean": 0.9632,
+      "ci95": [
+       0.9565,
+       0.9668
+      ]
+     }
     }
    },
    "1087": {
     "gt": {
-     "shift_1.5_own": 0.8700000000000001,
-     "shift_3.0_own": 1.0
+     "shift_0.75": {
+      "mean": 0.6855,
+      "ci95": [
+       0.628,
+       0.7337
+      ]
+     },
+     "shift_1.0": {
+      "mean": 0.7911,
+      "ci95": [
+       0.717,
+       0.8445
+      ]
+     },
+     "shift_1.5": {
+      "mean": 0.9368,
+      "ci95": [
+       0.8809,
+       0.9703
+      ]
+     },
+     "shift_3.0": {
+      "mean": 0.9981,
+      "ci95": [
+       0.9946,
+       1.0
+      ]
+     }
     },
     "pred": {
-     "shift_1.5_own": 0.8225,
-     "shift_3.0_own": 0.9524999999999999
+     "shift_0.75": {
+      "mean": 0.684,
+      "ci95": [
+       0.6132,
+       0.7993
+      ]
+     },
+     "shift_1.0": {
+      "mean": 0.7725,
+      "ci95": [
+       0.6969,
+       0.8989
+      ]
+     },
+     "shift_1.5": {
+      "mean": 0.8957,
+      "ci95": [
+       0.8476,
+       0.9697
+      ]
+     },
+     "shift_3.0": {
+      "mean": 0.9842,
+      "ci95": [
+       0.9747,
+       0.9957
+      ]
+     }
     }
    },
    "1090": {
     "gt": {
-     "shift_1.5_own": 0.8400000000000001,
-     "shift_3.0_own": 0.9450000000000001
+     "shift_0.75": {
+      "mean": 0.7333,
+      "ci95": [
+       0.7289,
+       0.7409
+      ]
+     },
+     "shift_1.0": {
+      "mean": 0.8288,
+      "ci95": [
+       0.8237,
+       0.8337
+      ]
+     },
+     "shift_1.5": {
+      "mean": 0.898,
+      "ci95": [
+       0.8822,
+       0.9196
+      ]
+     },
+     "shift_3.0": {
+      "mean": 0.9638,
+      "ci95": [
+       0.9574,
+       0.9672
+      ]
+     }
     },
     "pred": {
-     "shift_1.5_own": 0.945,
-     "shift_3.0_own": 0.98
+     "shift_0.75": {
+      "mean": 0.9075,
+      "ci95": [
+       0.8565,
+       0.9472
+      ]
+     },
+     "shift_1.0": {
+      "mean": 0.9577,
+      "ci95": [
+       0.9325,
+       0.9791
+      ]
+     },
+     "shift_1.5": {
+      "mean": 0.9789,
+      "ci95": [
+       0.9575,
+       0.9945
+      ]
+     },
+     "shift_3.0": {
+      "mean": 0.9975,
+      "ci95": [
+       0.9963,
+       0.9997
+      ]
+     }
     }
    }
   },
-  "protocol": "LOCO checkpoints, ROI-12D, matched 20-frame budgets, synthetic shifts 1.5/3.0"
+  "seeds": [
+   42,
+   123,
+   7
+  ],
+  "shifts": [
+   0.75,
+   1.0,
+   1.5,
+   3.0
+  ],
+  "protocol": "LOCO checkpoints, ROI-12D, max per-cow budgets (half ref/half eval), shift sweep, 3 seeds"
  },
  "legacy_results": {
   "pain_sheep_g5": {
